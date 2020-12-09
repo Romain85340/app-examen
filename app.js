@@ -1,0 +1,128 @@
+////// Dependance ///////
+
+const express = require('express');
+const mysql = require('mysql');
+const util = require('util');
+const fileUpload = require('express-fileupload');
+const path = require('path');
+const session = require('express-session')
+require('dotenv').config();
+const PORT = 3000;
+
+// Express
+const app = express()
+// Body parser
+app.use(express.json())
+app.use(express.urlencoded({
+    extended: false
+}))
+// Express static
+app.use(express.static(path.join(__dirname, './public')));
+// File Upload
+app.use(fileUpload());
+// Express-session
+app.use(session({
+    secret: 'shhuuuuut',
+    resave: false,
+    saveUninitialized: true,
+    name: 'biscuit',
+    cookie: {   maxAge: 24 * 60 * 60 * 7 * 1000 }
+  }));
+// MySQL
+var connection = mysql.createConnection({
+    host     : process.env.DB_HOST,
+    user     : process.env.DB_USER,
+    password : process.env.DB_PASS,
+    database : process.env.DB_DATABASE
+  });
+connection.connect(() => {
+    console.log("Connectez à la base de donnée");
+});
+const query = util.promisify(connection.query).bind(connection);
+global.connection = connection;
+global.query = query;
+
+
+///// Controllers ///////
+
+// All access
+const { homePage,
+        listBySport } = require("./controllers/home")
+// User power
+const { createItem,
+        getUserPage,
+        commentItem,
+        like, 
+        dislike,
+        deleteItem,
+        deleteComment,
+        editItem,
+        editProfileUser,
+        editImageUser,
+        editPasswordUser,
+        userDeleteAccount } = require("./controllers/user")
+// Authentification
+const { register,
+        login } = require("./controllers/auth")
+// Admin power
+const { showAllUser,
+        statusUser,
+        statusItem,
+        adminDeleteItem,
+        showItem,
+        adminCreateItem,
+        getListComment,
+        getListUserReview } = require("./controllers/admin")
+
+
+////// Session //////
+
+app.use(function(req, res, next){
+  const userID = req.session.userID
+  const roleID = req.session.roleID
+  const userNAME = req.session.userNAME
+  const userLASTNAME = req.session.userLASTNAME
+  res.locals.userSession = {userID, roleID, userNAME, userLASTNAME}
+  // console.log(res.locals.userSession);
+  next();
+})
+
+
+/////// Routes ////////
+
+// All Access
+app.get("/", homePage) // Show home page
+app.get("/articles/:id", listBySport) // Show list post by sport
+// User area/power
+app.get("/user/:id", getUserPage) // Show user page
+app.delete("/user/:id", userDeleteAccount) // User delete account
+app.post("/user/item/:id", createItem) // User add post
+app.put("/user/edit/item/:id", editItem) // User edit post
+app.put("/user/edit/profil/:id", editProfileUser) // User edit profile
+app.put("/user/edit/profil/:id/image", editImageUser) // User edit image profile
+app.put("/user/edit/profil/:id/password", editPasswordUser) // User edit password
+app.post("/comment/:id", commentItem) // Comment one post
+app.delete("/user/item/:id", deleteItem) // User delete post
+app.delete("/user/comment/:id", deleteComment) // User delete comment
+app.get("/like/:id", like) // Like post
+app.get("/dislike/:id", dislike) // Dislike post
+// Authentication
+app.post("/auth/register", register) // Register account
+app.post("/auth/login", login) // User login
+// Admin power/Area
+app.get("/admin/user", showAllUser) // Display list user
+app.get("/admin/item", showItem) // Display list item
+app.post("/admin/item", adminCreateItem) // Create post
+app.post("/admin/category") // Create category
+app.get("/admin/user/:id/status", statusUser) // Switch status user block/unblock
+app.get("/admin/item/:id/status", statusItem) // Switch status post visible/unvisible
+app.delete("/admin/delete/item/:id", adminDeleteItem) // Delete one post
+app.get("/admin/item/:id/comment", getListComment) // Show list of comment of item
+app.get("/admin/item/:id/user-review", getListUserReview) // Show list of like and dislike of item
+
+
+/////// Serveur /////////
+
+app.listen(PORT, () => {
+    console.log(`Le serveur tourne sur le port ${PORT}`);
+})
