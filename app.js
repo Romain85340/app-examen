@@ -72,7 +72,9 @@ const { showAllUser,
         showItem,
         adminCreateItem,
         getListComment,
-        getListUserReview } = require("./controllers/admin")
+        getListUserReview,
+        adminCreateCategory,
+        adminDeleteCategory } = require("./controllers/admin")
 
 
 ////// Session //////
@@ -113,10 +115,11 @@ app.post("/auth/login", login) // User login
 app.get("/admin/user", showAllUser) // Display list user
 app.get("/admin/item", showItem) // Display list item
 app.post("/admin/item", adminCreateItem) // Create post
-app.post("/admin/category") // Create category
+app.post("/admin/category", adminCreateCategory) // Create category
 app.get("/admin/user/:id/status", statusUser) // Switch status user block/unblock
 app.get("/admin/item/:id/status", statusItem) // Switch status post visible/unvisible
 app.delete("/admin/delete/item/:id", adminDeleteItem) // Delete one post
+app.delete("/admin/category/:id", adminDeleteCategory) // Delete a category
 app.get("/admin/item/:id/comment", getListComment) // Show list of comment of item
 app.get("/admin/item/:id/user-review", getListUserReview) // Show list of like and dislike of item
 

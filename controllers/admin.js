@@ -68,7 +68,6 @@ module.exports = {
     },
     // Create post ("/admin/item")
     adminCreateItem: async (req, res) => {
-        const id = req.params.id
         const title = req.body.title
         const content = req.body.content
         const id_category = req.body.category
@@ -126,5 +125,50 @@ module.exports = {
         } catch(err){
             res.send(err)
         }
+    },
+    // Admin create category ("/admin/category")
+    adminCreateCategory: async (req, res) => {
+        const title = req.body.title
+        const content = req.body.content
+        
+        if(!title || !content){
+            res.json("Remplissez tout les champs")
+        } else {
+            if(!req.files){
+                res.json("Ajouter une image a votre article")
+            } else {
+                let imageUpload = req.files.image
+                let image = `/images/${imageUpload.name}`
+
+                if(imageUpload.mimetype === "image/jpeg" || imageUpload.mimetype === "image/jpg" || imageUpload.mimetype === "image/gif" || imageUpload.mimetype === "image/png"){
+                    imageUpload.mv(`public/images/${imageUpload.name}`, async function(err){
+                        if(err){
+                            res.send(err)
+                        }
+                        try {
+                            await query("INSERT INTO category (title, content, image, date, id_user) VALUES (?, ?, ?, NOW(), 20)", [title, content, image])
+                            res.json("La categorie à bien été ajoutée")
+                        }catch(err){
+                            res.send(err)
+                        }
+                    })
+                } else {
+                    res.json("L'image n'a pas le format adequate")
+                }
+            }
+        }
+    },
+    adminDeleteCategory: (req, res) => {
+        idCategory = req.params.id
+        queryDB = "DELETE FROM category WHERE id = ?"
+
+        connection.query(queryDB, [idCategory], (error) => {
+            if(error){
+                res.send(error)
+            } else {
+                res.json("La categorie à bien été supprimé")
+            }
+          }
+        );
     }
 }

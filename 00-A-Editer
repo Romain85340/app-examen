@@ -3,3 +3,4 @@ like(controllers/user): modifier id_user par userID de la session
 register(controllers/auth): modifier requete du formulaire (birthday) pour trois select(day, month, years) pour inserer dans un format SQL 
 deleteComment(controllers/user): rajouter une condition id_user pour supprimer le commentaire egalement en fonction de la session utilisateur
 commentItem(controllers/user): modifier id_user dans requete sql pour userID de la session
+adminCreateCategory(controllers/admin): modifier id_user dans la requete sql pour userID de la session
