@@ -53,6 +53,9 @@ module.exports = {
         const title = req.body.title
         const content = req.body.content
 
+        if(!title || !content){
+            res.json("Remplissez tout les champs")
+        }
         if(!req.files){
             try{
                 await query("UPDATE item SET title = ?, content = ?, date = now(), status = 0 WHERE id = ?", [title, content, id])
@@ -61,7 +64,6 @@ module.exports = {
                 res.send(err)
             }
         }
-
         let imageUpload = req.files.image
         let image = `/images/${imageUpload.name}`
 

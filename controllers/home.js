@@ -4,7 +4,8 @@ module.exports = {
         try {
             const posts = await query("SELECT i.id, u.firstname AS author_firstname, u.lastname AS author_lastname, i.title, c.title AS category, i.content, i.image, i.date FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category ORDER BY date DESC LIMIT 3")
             const categories = await query("SELECT title FROM category")
-            res.json({posts, categories})
+            res.render("home")
+            // res.json({posts, categories})
         } catch(err) {
             res.send(err)
         }

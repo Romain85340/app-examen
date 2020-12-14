@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 const path = require('path');
 const session = require('express-session')
 require('dotenv').config();
+const methodOverride = require('method-override');
 const PORT = 3000;
 
 // Express
@@ -41,6 +42,10 @@ connection.connect(() => {
 const query = util.promisify(connection.query).bind(connection);
 global.connection = connection;
 global.query = query;
+// EJS
+app.set('view engine', 'ejs');
+// Method Override
+app.use(methodOverride('_method'))
 
 
 ///// Controllers ///////
