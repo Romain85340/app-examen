@@ -1,0 +1,28 @@
+<%- include("./partials/header") -%>
+<%- include("./partials/navbar") -%>
+
+    <main class="login-page">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <form class="login" method="POST" action="/auth/login">
+                <img class="image-login" src="/images/default-user.png" alt=""> 
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Email</label>
+                  <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" placeholder="Entrez votre email" name="email">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Mot de passe</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="Entrez votre mot de passe" name="password">
+                </div>
+                <button type="submit" class="button-login">Connexion</button>
+                <div class="form-group">
+                  <a href="#" class="link-login">Vous n'avez pas de compte</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+
+<%- include('./partials/footer') -%>

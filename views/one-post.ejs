@@ -1,0 +1,135 @@
+<%- include("./partials/header") -%>
+<%- include("./partials/navbar") -%>
+<div class="under-navbar"></div>
+
+
+    <main class='single-post'>
+        <div class="card">
+            <div class="card-header">
+              <img src="./images/background/rocco-resize.jpg" class="img-fluid" alt="">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h1 class="card-title">Special title hors de commun</h1>
+              <h2 class="card-category">Categorie</h2>
+              <p class="card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Id quam sapiente molestiae numquam quas, voluptates omnis nulla ea odio quia similique corrupti magnam, doloremque laborum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Id quam sapiente  molestiae numquam quas, voluptates omnis nulla ea odio quia similique corrupti magnam, doloremque laborum.</p>
+              <div class="status d-flex justify-content-around flex-wrap">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">18 personnes aiment cet article <i class="fas fa-thumbs-up"></i></button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">9 personnes n'aiment pas cet article <i class="fas fa-thumbs-down"></i></button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3">5 personnes ont commenté cet article <i class="fas fa-comment"></i></button>
+              </div>
+              <div class="btn-card d-flex justify-content-center flex-wrap">
+                <div class="btn-status d-flex flex-wrap">
+                  <a class="like" href="">J'aime</a>
+                  <a class="dislike" href="">Je n'aime pas</a>
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3">Commenter</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- Modal Like-->
+        <div class="modal fade modal-like" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Les personnes qui aiment cet article</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="profil d-flex align-items-center">
+                        <img src="./images/profile-picture/profileman.jpg" alt="">
+                        <p>Romain Aubry</p>
+                    </div>
+                    <div class="profil d-flex align-items-center">
+                        <img src="./images/profile-picture/profileman.jpg" alt="">
+                        <p>Romain Aubry</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Modal Dislike-->
+        <div class="modal fade modal-dislike" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Les personnes qui n'aiment pas cet article</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                 <div class="profil d-flex align-items-center">
+                     <img src="./images/profile-picture/profileman.jpg" alt="">
+                     <p>Romain Aubry</p>
+                 </div>
+                 <div class="profil d-flex align-items-center">
+                    <img src="./images/profile-picture/profileman2.jpg" alt="">
+                    <p>Romain Aubry</p>
+                </div>
+                <div class="profil d-flex align-items-center">
+                    <img src="./images/profile-picture/profileman3.jpg" alt="">
+                    <p>Romain Aubry</p>
+                </div>
+                <div class="profil d-flex align-items-center">
+                    <img src="./images/profile-picture/profileman.jpg" alt="">
+                    <p>Romain Aubry</p>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Modal Comment-->
+        <div class="modal fade modal-comment" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Les commentaires de l'article</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body d-flex flex-column">
+                    <div class="not-user">
+                        <div class="profil d-flex align-items-center flex-wrap">
+                            <img src="./images/profile-picture/profilegirl2.jpg" alt="">
+                            <h2>Marie Herbreteau: </h2>
+                        </div>
+                        <p>L'article est super fdojfhs klvhdl lkvqksdh kvhsk hksqdks hkd hkhd khdkh kdkhkd!</p>
+                    </div>
+                    <div class="not-user">
+                        <div class="profil d-flex align-items-center">
+                            <img src="./images/profile-picture/profileman2.jpg" alt="">
+                            <h2>Sullivan: </h2>
+                        </div>
+                        <p class="align-self-end">L'article est nul a chier !</p>
+                    </div>
+                    <hr>
+                    <div class="user d-flex flex-column">
+                        <h2>Votre commentaire</h2>
+                        <p>L'article est nul fdzf zadfs dazc zadc zadc azdc</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex flex-column">
+                    <textarea name="" id="" cols="50" rows="3" placeholder="Laisser un commentaire"></textarea>
+                    <div class="button-comment-modal">
+                        <button type="button" class="btn btn-primary">Envoyer</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </main>
+
+<%- include('./partials/footer') -%>

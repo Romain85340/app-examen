@@ -86,9 +86,11 @@ module.exports = {
         const id = req.params.id;
 
         try {
-            const post = await query("SELECT i.id, c.title AS category, i.title, i.content, i.image, i.date FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category WHERE i.id_user = ?", [id])
-            const profil = await query("SELECT firstname, lastname, birthday, image FROM user WHERE id = ?", [id])
-            res.json({post, profil})
+            const posts = await query("SELECT i.id AS id_post, c.title AS category ,u.id, u.firstname, u.lastname, i.title, i.content, i.image, i.date, ifnull(count(s.bad), 0) as bad_status, ifnull(count(s.good), 0) AS good_status, ifnull(count(comment.id), 0) AS comment FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category LEFT OUTER JOIN comment ON comment.id_item = i.id LEFT OUTER JOIN status AS s ON s.id_item = i.id WHERE u.id = ? GROUP BY i.id ORDER BY i.date DESC", [id])
+            const profil = await query("SELECT firstname, lastname, DATE_FORMAT(birthday, '%d/%m/%Y') AS birthday, email, image FROM user WHERE id = ?", [id])
+            // res.json({post, profil})
+            console.log(posts);
+            res.render("user-area", {profil: profil[0], posts})
         } catch(err){
             res.send(err)
         }
@@ -120,21 +122,19 @@ module.exports = {
         const idItem = req.params.id
 
         try {
-            const checkLike = await query("SELECT * FROM status WHERE id_item = ? AND id_user = 3", [idItem])
+            const checkLike = await query("SELECT id_user, id_item, bad, good FROM status WHERE id_item = ? AND id_user = 2", [idItem])
             console.log(checkLike.length);
             if(checkLike.length === 0){
-                const like = await query("INSERT INTO status (user_review, id_user, id_item) VALUES (1,3,?)", [idItem])
+                const like = await query("INSERT INTO status (good, id_user, id_item) VALUES (1,2,?)", [idItem])
                 console.log(like);
                 res.json("Vous venez de liker l'item")
             }
-            else if(checkLike[0].user_review === 0 || checkLike[0].user_review === 2){
-                const changeForLike = await query("UPDATE status SET user_review = 1 WHERE status.id_item = ?  AND status.id_user = 3", [idItem])
+            else if(checkLike[0].bad === 1){
+                const changeForLike = await query("UPDATE status SET bad = 0, good = 1 WHERE status.id_item = ?  AND status.id_user = 2", [idItem])
                 console.log(changeForLike);
                 res.json("Vous venez de liker l'item")
             } else {
-                const changeForUnlike = await query("UPDATE status SET user_review = 0 WHERE status.id_item = ?  AND status.id_user = 3", [idItem])
-                console.log(changeForUnlike);
-                res.json("Vous venez de retirer votre like de l'item")
+                res.json("Vous avez deja liker cette item")
             }
         } catch(err){
             res.send(err)
@@ -145,22 +145,21 @@ module.exports = {
         const idItem = req.params.id
         
         try {
-            const checkDislike = await query("SELECT * FROM status WHERE id_item = ? AND id_user = 3", [idItem])
-            if(checkLike.length === 0){
-                const like = await query("INSERT INTO status (user_review, id_user, id_item) VALUES (2,3,?)", [idItem])
-                console.log(like);
+            const checkDislike = await query("SELECT id_user, id_item, bad, good FROM status WHERE id_item = ? AND id_user = 2", [idItem])
+            console.log(checkDislike);
+            if(checkDislike.length === 0){
+                await query("INSERT INTO status (bad, id_user, id_item) VALUES (1,2,?)", [idItem])
                 res.json("Vous venez de disliker l'item")
             }
-            else if(checkDislike[0].user_review === 0 || checkDislike[0].user_review === 1){
-                await query("UPDATE status SET user_review = 2 WHERE status.id_item = ?  AND status.id_user = 3", [idItem])
+            else if(checkDislike[0].good === 1){
+                await query("UPDATE status SET bad = 1, good = 0 WHERE status.id_item = ?  AND status.id_user = 2", [idItem])
                 res.json("Vous venez de disliker l'item")
             } else {
-                await query("UPDATE status SET user_review = 0 WHERE status.id_item = ?  AND status.id_user = 3", [idItem])
-                res.json("Vous venez de retirer votre dislike de l'item")
+                res.json("Vous avez deja disliker l'item")
             }
-            res.json(checkDislike)
         } catch(err){
-            res.send(err)
+            // res.send(err)
+            res.json("bug")
         }
     },
     // User edit profile ("/user/edit/profil/:id")

@@ -170,5 +170,34 @@ module.exports = {
             }
           }
         );
+    },
+    // Edit category ('/admin/category/edit/:id')
+    adminUpdateCategory: (req, res) => {
+        const id = req.params.id
+
+        if (!req.files){
+            res.json("Selectionner une image")
+        } else {
+    
+        let imageUpload = req.files.image
+        // var for upload name image in mySQL
+        let image = `/images/${imageUpload.name}` 
+            
+            
+        // if the image has the correct format
+        if (imageUpload.mimetype === "image/jpeg" || imageUpload.mimetype === "image/jpg" || imageUpload.mimetype === "image/gif" || imageUpload.mimetype === "image/png") {
+            // Use the mv() method to place the file somewhere in NodeJS
+            imageUpload.mv(`public/images/${imageUpload.name}`, async function(err) {
+                if (err){
+                    return res.status(500).send(err);
+                }
+                try{
+                    await query("UPDATE category SET image = ? WHERE id = ?", [image, id])
+                    res.json("L'image de la categorie à bien été modifier")
+                } catch(err) {
+                    res.send(err)
+                }
+            });
+        }}
     }
 }

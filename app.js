@@ -1,5 +1,4 @@
 ////// Dependance ///////
-
 const express = require('express');
 const mysql = require('mysql');
 const util = require('util');
@@ -49,10 +48,10 @@ app.use(methodOverride('_method'))
 
 
 ///// Controllers ///////
-
 // All access
 const { homePage,
-        listBySport } = require("./controllers/home")
+        listBySport,
+        onePost } = require("./controllers/home")
 // User power
 const { createItem,
         getUserPage,
@@ -67,8 +66,11 @@ const { createItem,
         editPasswordUser,
         userDeleteAccount } = require("./controllers/user")
 // Authentification
-const { register,
-        login } = require("./controllers/auth")
+const { getRegister,
+        register,
+        login,
+        getLogin,
+        logout } = require("./controllers/auth")
 // Admin power
 const { showAllUser,
         statusUser,
@@ -79,27 +81,35 @@ const { showAllUser,
         getListComment,
         getListUserReview,
         adminCreateCategory,
-        adminDeleteCategory } = require("./controllers/admin")
+        adminDeleteCategory,
+        adminUpdateCategory } = require("./controllers/admin")
 
 
 ////// Session //////
-
 app.use(function(req, res, next){
   const userID = req.session.userID
   const roleID = req.session.roleID
   const userNAME = req.session.userNAME
   const userLASTNAME = req.session.userLASTNAME
-  res.locals.userSession = {userID, roleID, userNAME, userLASTNAME}
-  // console.log(res.locals.userSession);
+  const userIMG = req.session.image
+
+  res.locals.userSession = {userID, roleID, userNAME, userLASTNAME, userIMG}
+  console.log(res.locals.userSession);
   next();
 })
 
 
 /////// Routes ////////
-
 // All Access
 app.get("/", homePage) // Show home page
-app.get("/articles/:id", listBySport) // Show list post by sport
+app.get("/articles/:category", listBySport) // Show list post by sport
+app.get("/articles/:category/:post", onePost) // Show only one post
+// Authentication
+app.get("/auth/register", getRegister) // Get register page
+app.post("/auth/register", register) // Register account
+app.get("/auth/login", getLogin) // Get login page
+app.post("/auth/login", login) // User login
+app.get("/auth/logout", logout) // Disconnect user
 // User area/power
 app.get("/user/:id", getUserPage) // Show user page
 app.delete("/user/:id", userDeleteAccount) // User delete account
@@ -113,9 +123,6 @@ app.delete("/user/item/:id", deleteItem) // User delete post
 app.delete("/user/comment/:id", deleteComment) // User delete comment
 app.get("/like/:id", like) // Like post
 app.get("/dislike/:id", dislike) // Dislike post
-// Authentication
-app.post("/auth/register", register) // Register account
-app.post("/auth/login", login) // User login
 // Admin power/Area
 app.get("/admin/user", showAllUser) // Display list user
 app.get("/admin/item", showItem) // Display list item
@@ -127,10 +134,10 @@ app.delete("/admin/delete/item/:id", adminDeleteItem) // Delete one post
 app.delete("/admin/category/:id", adminDeleteCategory) // Delete a category
 app.get("/admin/item/:id/comment", getListComment) // Show list of comment of item
 app.get("/admin/item/:id/user-review", getListUserReview) // Show list of like and dislike of item
+app.put("/admin/category/edit/:id", adminUpdateCategory) // Admin update category
 
 
 /////// Serveur /////////
-
 app.listen(PORT, () => {
     console.log(`Le serveur tourne sur le port ${PORT}`);
 })

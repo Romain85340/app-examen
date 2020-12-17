@@ -1,6 +1,13 @@
 const bcrypt = require('bcrypt');
 
 module.exports = {
+    getLogin: (req, res) => {
+        res.render("login")
+    },
+    // Display register page
+    getRegister: (req, res) => {
+        res.render("register-account")
+    },
     // Register account ("/auth/register")
     register: async (req, res) => {
         // var for request form
@@ -60,7 +67,7 @@ module.exports = {
         const password = req.body.password;
 
         // Request SQL for check if the email exists in the database
-        connection.query('SELECT firstname, lastname, email, password, id_role, id, status FROM user WHERE email= ?', [email], (err, result) => {
+        connection.query('SELECT firstname, lastname, email, password, id_role, id, image, status FROM user WHERE email= ?', [email], (err, result) => {
             if (err || result.length === 0) {
                 res.json("vous n etes pas inscrit")
             } else {
@@ -75,17 +82,19 @@ module.exports = {
                             res.json("votre compte est bloqué")
                         } else {
                             // if email and password is correct, select this user 
-                            connection.query('SELECT firstname, lastname, birthday, email, id_role, id FROM user WHERE email = ? AND password = ?', [email, result[0].password], function (err, results) {
+                            connection.query('SELECT firstname, lastname, birthday, email, id_role, id, image FROM user WHERE email = ? AND password = ?', [email, result[0].password], function (err, results) {
                                 if (results.length) {
                                     // if there is a result, insert in session:
                                     req.session.loggedin = true;
                                     req.session.userNAME = result[0].firstname;
                                     req.session.userLASTNAME = result[0].lastname;
                                     req.session.userID = result[0].id;
-                                    req.session.roleID = result[0].role_id;
+                                    req.session.roleID = result[0].id_role;
+                                    req.session.image = result[0].image;
                                     // console.log("session",  req.session);
                                 
-                                    res.json("Vous etes connecté")
+                                    // res.json("Vous etes connecté")
+                                    res.redirect("/")
                                 
                                 } else {
                                     res.send(err)
@@ -98,5 +107,11 @@ module.exports = {
                 })
             }
         })
+    },
+    // Disconnect user
+    // Callback for disconnect user
+    logout: (req, res) => {
+        req.session.destroy()
+        res.redirect("/")
     }
 }

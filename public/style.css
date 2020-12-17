@@ -1,0 +1,260 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+a {
+    text-decoration: none !important;
+}
+li {
+    list-style: none;
+}
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+/* NAVBAR */
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+.nav-link {
+    transition: .5s;
+    text-align: center;
+}
+.nav-link:hover {
+    background-color: rgb(41, 41, 41);
+    color: #fff;
+}
+.under-navbar {
+    height: 56px !important;
+}
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+/* HOME PAGE*/
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+.home .eyecatcher {
+    padding: 20px;
+}
+.home .eyecatcher video {
+    width: 100vw;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+.home .eyecatcher h1 {
+    padding: 10px;
+}
+.home .eyecatcher p {
+    padding: 10px;
+    text-align: center;
+}
+.home .eyecatcher .button-eyecatcher {
+    padding: 10px;
+}
+.home .last-post h1 {
+    text-align: center;
+    margin: 40px;
+}
+.home .last-post .card {
+    margin: 20px;
+}
+.home .last-post .card-text {
+    max-height: 110px;
+    overflow-y: hidden;
+}
+.home .last-post .card .btn-status a {
+    padding: 0px 20px;
+}
+.home .category h1 {
+    text-align: center;
+}
+.home .category .swiper-container {
+    width: 80%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.home .category .swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 300px;
+    height: 400px;
+}
+.home .category .card-category {
+    width: 300px !important;
+    height: 400px;
+    margin: 0 !important;
+    border: 1px solid rgba(41, 41, 41, 0.3);
+}
+.home .category img {
+    height: 200px;
+    width: 300px;
+}
+.home .category .card-category-content {
+    height: 200px;
+    width: 300px;
+}
+.home .category h2 {
+    margin-top: 30px;
+}
+.home .category a {
+    margin-top: 30px;
+}
+.home .category .swiper-pagination-bullet-active {
+    background-color: #007bff !important;
+}
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+/* LOGIN PAGE */
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+.login-page {
+    height: 100vh;
+}
+.login-page .login {
+    margin: 300px auto 0 auto;
+    padding: 80px 30px 50px 30px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #343a40;
+    position: relative;
+}
+.login-page .login label {
+    color: white;
+}
+.login-page .image-login {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    top: -75px;
+    left: 72px;
+    border: 4px solid #fff;
+    border-radius: 50%;
+}
+.login-page .button-login {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    background: #fff;
+    border: 0px;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+.login-page .link-login {
+    text-decoration: underline;
+    color: #fff;
+}
+.login-page .link-login:hover {
+    color: #000;
+}
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+/* REGISTER PAGE */
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+.register-page {
+    min-height: 100vh;
+    background: #fff; 
+}
+.register-page .register {
+    margin: 200px auto auto auto;
+    padding: 20px;
+    background: #343a40;
+}
+.register-page .title-login h1 {
+    font-size: 40px;
+    color: #fff;
+    font-family: 'Dancing Script', cursive;
+    margin: 20px;
+    text-align: center;
+}
+.register-page .register label {
+    color: #fff;
+}
+.register-page .select-register {
+    overflow-y: scroll;
+}
+.register-page .btn-register {
+    border: 0px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 2px solid black;
+    padding: 6px 12px;
+    margin: 15px 0px;
+    color: #000;
+    transition: 1s;
+}
+.register-page .btn-register:hover {
+    background: #e7dee4;
+}
+.register-page input[type = "file"] {
+    background: #fff !important;
+    padding: 4px 4px;
+    border-radius: 4px;
+}
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+/* POST BY CATEGORY */
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+.byCategory .post .card {
+    margin: 20px;
+}
+.byCategory .post .card li{
+    padding: 5px;
+}
+.byCategory .post .card .btn-status a {
+    padding: 20px;
+}
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+/* USER-AREA */
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+.user-area .user-profil .card {
+    width: 24rem;
+    margin-top: 50px;
+}
+.user-area .user-profil .card a {
+    margin: 5px;
+}
+.user-area .list-post {
+    margin-top: 50px;
+}
+.user-area .list-post h1 {
+    margin-bottom: 50px;
+}
+.user-area .list-post .card .card-header button {
+    text-decoration: none !important;
+    font-size: 20px;
+}
+.user-area .list-post .card .card-header p {
+    margin-left: 14px;
+    font-size: 16px;
+}
+.user-area .list-post .card .card-body img {
+    max-width: 400px !important;
+}
+.user-area .list-post .card .card-title span {
+    text-transform: capitalize;
+}
+.user-area .list-post .card .card-body span {
+    font-weight: bolder;
+}
+.user-area .list-post .card .card-body .status li {
+    text-align: center;
+    padding: 4px;
+}
+.user-area .list-post .card .card-body .btn li {
+    text-align: center;
+    padding: 4px;
+}
+.user-area .list-like h1 {
+    text-align: center;
+    margin-top: 50px;
+}
+.user-area .list-post .no-post-callaction {
+    background: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 18px;
+}
