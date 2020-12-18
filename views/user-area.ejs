@@ -273,8 +273,32 @@
         </div>
     </section>
 
-    <section class="list-like">
+    <section class="list-like container">
         <h1>Vous avez reagi a ces articles</h1>
+
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Titre de l'article</th>
+                <th scope="col">Votre avis</th>
+                <th scope="col">Retirer</th>
+              </tr>
+            </thead>
+            <tbody>
+            <% listStatus.forEach(function(entry) {%>
+              <tr>
+                  <td><a href="/articles/<%= entry.id_category%>/<%= entry.id_post%>"><%= entry.title%></a></td>
+                <% if (entry.good === 1) { %>
+                  <td><i class="fas fa-thumbs-up"></i></td>
+                  <td><a href="">Retirer</a></td>
+                <% } else { %>
+                    <td><i class="fas fa-thumbs-down"></i></td>
+                    <td><a href="/delete-status/<%= entry.id%>">Retirer</a></td>
+                <% } %>
+              </tr>
+            <%});%>
+            </tbody>
+          </table>
     </section>
 </main>
 

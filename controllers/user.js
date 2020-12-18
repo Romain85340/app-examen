@@ -103,6 +103,8 @@ module.exports = {
             const posts = await query("SELECT i.id AS id_post, c.title AS category ,u.id, u.firstname, u.lastname, i.title, i.content, i.image, i.date, ifnull(count(s.bad), 0) as bad_status, ifnull(count(s.good), 0) AS good_status, ifnull(count(comment.id), 0) AS comment FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category LEFT OUTER JOIN comment ON comment.id_item = i.id LEFT OUTER JOIN status AS s ON s.id_item = i.id WHERE u.id = ? GROUP BY i.id ORDER BY i.date DESC", [id])
             const profil = await query("SELECT id, firstname, lastname, DATE_FORMAT(birthday, '%d/%m/%Y') AS birthday, email, image FROM user WHERE id = ?", [id])
             const categories = await query("SELECT id, title FROM category")
+            const listStatus = await query("SELECT i.id AS id_post, i.id_category, i.title, s.bad, s.good FROM status AS s INNER JOIN item AS i ON i.id = s.id_item WHERE s.id_user = ?", [id])
+            console.log(listStatus);
             const birthday = profil[0].birthday.split('')
             const day = birthday[0] + birthday[1]
             const month = birthday[3] + birthday[4]
@@ -113,7 +115,7 @@ module.exports = {
             console.log(profil[0].birthday);
             // console.log(birthdayDate);
             // res.json({post, profil})
-            res.render("user-area", {categories, profil: profil[0], posts, birthdayDate, errorProfil: req.flash("errorProfil"), successProfil: req.flash("successProfil"), error: req.flash("error"), success: req.flash("success")})
+            res.render("user-area", {categories, listStatus, profil: profil[0], posts, birthdayDate, errorProfil: req.flash("errorProfil"), successProfil: req.flash("successProfil"), error: req.flash("error"), success: req.flash("success")})
         } catch(err){
             res.send(err)
         }
@@ -146,6 +148,17 @@ module.exports = {
             res.send(err)
         }
     },
+    //Delete status like/dislike
+    deleteLikeOrDislike: async (req, res) => {
+        const id = req.params.id;
+        const userID = req.session.userID
+        try {
+            await query("DELETE FROM status WHERE id_item = ?", [id])
+            res.redirect(`/user/${userID}`)
+        } catch(err) {
+            res.send(err)
+        }
+    },
     // Like post ("/like/:id")
     like : async (req, res) => {
         const idItem = req.params.id
@@ -159,19 +172,20 @@ module.exports = {
                     const like = await query("INSERT INTO status (good, id_user, id_item) VALUES (1,?,?)", [userID, idItem])
                     // console.log(like);
                     // res.json("Vous venez de liker l'item")
-                    res.redirect(`/articles/${checkLike[0].id_category}/${checkLike[0].id_item}`)
+                    res.redirect(`back`)
                 }
                 else if(checkLike[0].bad === 1){
                     const changeForLike = await query("UPDATE status SET bad = null, good = 1 WHERE status.id_item = ?  AND status.id_user = ?", [idItem, userID])
                     // console.log(changeForLike);
                     // res.json("Vous venez de liker l'item")
-                    res.redirect(`/articles/${checkLike[0].id_category}/${checkLike[0].id_item}`)
+                    res.redirect(`back`)
                 } else {
                     // res.json("Vous avez deja liker cette item")
-                    res.redirect(`/articles/${checkLike[0].id_category}/${checkLike[0].id_item}`)
+                    res.redirect(`back`)
                 }
             } else {
-                res.redirect("/auth/login")
+                req.flash("error", "Vous devez etre connecté"),
+                res.redirect(`/auth/login`)
             }
         } catch(err){
             res.send(err)
@@ -185,22 +199,22 @@ module.exports = {
         try {
             if(userID != undefined){
                 const checkDislike = await query("SELECT s.id_user, s.id_item, s.bad, s.good, i.id_category FROM status AS s INNER JOIN item AS i ON i.id = s.id_item  WHERE s.id_item = ? AND s.id_user = ?", [idItem, userID])
-                console.log(checkDislike);
                 if(checkDislike.length === 0){
                     await query("INSERT INTO status (bad, id_user, id_item) VALUES (1,?,?)", [userID, idItem])
                     // res.json("Vous venez de disliker l'item")
-                    res.redirect(`/articles/${checkDislike[0].id_category}/${checkDislike[0].id_item}`)
+                    res.redirect(`back`)
                 }
                 else if(checkDislike[0].good === 1){
                     await query("UPDATE status SET bad = 1, good = null WHERE status.id_item = ?  AND status.id_user = ?", [idItem, userID])
                     // res.json("Vous venez de disliker l'item")
-                    res.redirect(`/articles/${checkDislike[0].id_category}/${checkDislike[0].id_item}`)
+                    res.redirect(`back`)
                 } else {
                     // res.json("Vous avez deja disliker l'item")
-                    res.redirect(`/articles/${checkDislike[0].id_category}/${checkDislike[0].id_item}`)
+                    res.redirect(`back`)
                 }
             } else {
-                res.redirect('/auth/login')
+                req.flash("error", "Vous devez etre connecté"),
+                res.redirect(`/auth/login`)
             }
         } catch(err){
             // res.send(err)

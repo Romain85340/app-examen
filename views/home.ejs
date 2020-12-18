@@ -19,7 +19,7 @@
   </section>
 
   <!-- Last post-->
-  <section class="container last-post">
+  <section class="container last-post" id="new-post">
     <h1>Les articles récents</h1>
 
     <% posts.forEach(function(entry) {%>
@@ -33,7 +33,6 @@
         <ul class="status d-flex justify-content-around flex-wrap">
           <li style="color: #007bff;"><span><%= entry.good_status%> personnes aiment cet article </span><i class="fas fa-thumbs-up"></i></li>         
           <li style="color: #007bff;"><span><%= entry.bad_status%> personnes n'aiment pas cet article </span><i class="fas fa-thumbs-down"></i></li>
-          <li style="color: #007bff;"><span><%= entry.comment%> personnes ont commenté </span><i class="fas fa-comment"></i></li>
         </ul>
         <div class="btn-card d-flex justify-content-between flex-wrap">
           <a href="/articles/<%= entry.id_category%>/<%= entry.id%>" class="btn btn-primary">Lire l'article</a>

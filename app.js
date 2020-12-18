@@ -70,7 +70,8 @@ const { createItem,
         editProfileUser,
         editImageUser,
         editPasswordUser,
-        userDeleteAccount } = require("./controllers/user")
+        userDeleteAccount,
+        deleteLikeOrDislike } = require("./controllers/user")
 // Authentification
 const { getRegister,
         register,
@@ -129,6 +130,7 @@ app.delete("/user/item/:id", actionUser, deleteItem) // User delete post
 app.delete("/user/comment/:id", actionUser, deleteComment) // User delete comment
 app.get("/like/:id", actionUser, like) // Like post
 app.get("/dislike/:id", actionUser, dislike) // Dislike post
+app.get("/delete-status/:id", deleteLikeOrDislike) // Delete status of this post
 // Admin power/Area
 app.get("/admin/user", showAllUser) // Display list user
 app.get("/admin/item", showItem) // Display list item
