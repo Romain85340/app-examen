@@ -206,6 +206,108 @@ li {
 }
 /*//////////////////////////////////*/
 /*//////////////////////////////////*/
+/* SINGLE POST */
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
+.single-post .card {
+    margin: 20px;
+}
+.single-post  .card li{
+    padding: 5px;
+}
+.single-post .status button {
+    background: white !important;
+    color: #007bff;
+    border: 0 !important;
+}
+.single-post .card .btn-card {
+    margin-top: 20px;
+}
+.single-post .card .btn-status .like {
+    background: #007bff;
+    color: white;
+    margin-right: 10px;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+.single-post .card .btn-status .dislike {
+    background: #dc3545;
+    color: white;
+    margin-right: 10px;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+.single-post .card h2 {
+    margin-left: 20px;
+}
+.single-post .card-text {
+    margin-top: 20px;
+    margin-left: 20px;
+}
+.single-post .modal-dislike .profil {
+    margin: 10px;
+}
+.single-post .modal-dislike img {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+.single-post .modal-like p {
+    margin: 0 !important; 
+}
+.single-post .modal-like .profil {
+    margin: 10px;
+}
+.single-post .modal-like img {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+.single-post .modal-like p {
+    margin: 0 !important; 
+}
+.single-post .modal-comment img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.single-post .modal-comment h2 {
+    font-size: 20px;
+    font-weight: bolder;
+    margin: 0 !important;
+}
+.single-post .modal-comment .not-user {
+    margin: 8px 0px;
+}
+.single-post .modal-comment .user {
+    margin: 8px 0px;
+}
+.single-post .modal-comment .not-user p {
+    margin-left: 60px;
+}
+.single-post .modal-comment hr {
+    width: 100px;
+    align-self: center;
+}
+.single-post .modal-comment .user h2 {
+    font-size: 20px;
+    /* margin-left: 140px !important; */
+    align-self: flex-end;
+    margin-bottom: 8px !important;
+}
+.single-post .modal-comment .user p {
+    background-color: #007bff;
+    color: white;
+    padding: 8px;
+    border-radius: 10px;
+    max-width: 70%;
+    align-self: flex-end;
+}
+/*//////////////////////////////////*/
+/*//////////////////////////////////*/
 /* USER-AREA */
 /*//////////////////////////////////*/
 /*//////////////////////////////////*/
@@ -213,8 +315,20 @@ li {
     width: 24rem;
     margin-top: 50px;
 }
-.user-area .user-profil .card a {
+.user-area .user-profil .card button {
     margin: 5px;
+}
+.user-area .form-post h1 {
+    margin: 50px auto;
+}
+.user-area .form-post .title-category {
+    margin: 10px 0px;
+}
+.user-area .form-post .content {
+    margin: 15px;
+}
+.user-area .form-post .image {
+    margin: 15px;
 }
 .user-area .list-post {
     margin-top: 50px;

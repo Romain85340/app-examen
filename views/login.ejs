@@ -6,7 +6,26 @@
           <div class="row">
             <div class="col-md-12">
               <form class="login" method="POST" action="/auth/login">
-                <img class="image-login" src="/images/default-user.png" alt=""> 
+                <img class="image-login" src="/images/default-user.png" alt="">
+
+                <!---Message Flash-->
+                <% if(error.length > 0) { %>
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= error %>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                <% } %>
+                <% if(success.length > 0) { %>
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%= success %>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                <% } %>
+
                 <div class="form-group">
                   <label for="exampleInputEmail1">Email</label>
                   <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" placeholder="Entrez votre email" name="email">
@@ -17,7 +36,7 @@
                 </div>
                 <button type="submit" class="button-login">Connexion</button>
                 <div class="form-group">
-                  <a href="#" class="link-login">Vous n'avez pas de compte</a>
+                  <a href="/auth/register" class="link-login">Vous n'avez pas de compte</a>
                 </div>
               </form>
             </div>

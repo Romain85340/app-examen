@@ -8,12 +8,17 @@ module.exports = {
         const title = req.body.title
         const content = req.body.content
         const id_category = req.body.category
+        const userID = req.session.userID
         
         if(!title || !content || !id_category ){
-            res.json("Remplissez tout les champs")
+            // res.json("Remplissez tout les champs")
+            req.flash("error", "Remplissez tout les champs"),
+                res.redirect(`/user/${userID}`)
         } else {
             if(!req.files){
-                res.json("Ajouter une image a votre article")
+                // res.json("Ajouter une image a votre article")
+                req.flash("error", "Ajoutez une categorie"),
+                res.redirect(`/user/${userID}`)
             } else {
                 let imageUpload = req.files.image
                 let image = `/images/${imageUpload.name}`
@@ -25,13 +30,18 @@ module.exports = {
                         }
                         try {
                             const post = await query("INSERT INTO item (title, content, image, date, id_user, id_category, status) VALUES (?, ?, ?, now(), ?, ?, 0)", [title, content, image, id, id_category])
-                            res.json({post})
+                            // res.json("Ok")
+                            req.flash("success", "L'article à bien été ajouté"),
+                            res.redirect(`/user/${userID}`)
                         }catch(err){
                             res.send(err)
                         }
                     })
                 } else {
-                    res.json("L'image n'a pas le format adequate")
+                    // res.json("L'image n'a pas le format adequate")
+                    req.flash("error", "L'image n'a pas le format adéquate"),
+                    res.redirect(`/user/${userID}`)
+
                 }
             }
         }
@@ -39,10 +49,14 @@ module.exports = {
     // User delete post ("/user/item/:id")
     deleteItem: async (req, res) => {
         const id = req.params.id;
+        const userID = req.session.userID
 
         try {
-            await query("DELETE FROM item WHERE id = ? AND id_user = 3", [id])
-            res.json("L'article à bien été supprimé")
+            await query("DELETE FROM item WHERE id = ? AND id_user = ?", [id, userID])
+            // res.json("L'article à bien été supprimé")
+            req.flash("success", "L'article à bien été supprimé"),
+            res.redirect(`/user/${userID}`)
+
         } catch(err){
             res.send(err)
         }
@@ -87,10 +101,19 @@ module.exports = {
 
         try {
             const posts = await query("SELECT i.id AS id_post, c.title AS category ,u.id, u.firstname, u.lastname, i.title, i.content, i.image, i.date, ifnull(count(s.bad), 0) as bad_status, ifnull(count(s.good), 0) AS good_status, ifnull(count(comment.id), 0) AS comment FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category LEFT OUTER JOIN comment ON comment.id_item = i.id LEFT OUTER JOIN status AS s ON s.id_item = i.id WHERE u.id = ? GROUP BY i.id ORDER BY i.date DESC", [id])
-            const profil = await query("SELECT firstname, lastname, DATE_FORMAT(birthday, '%d/%m/%Y') AS birthday, email, image FROM user WHERE id = ?", [id])
+            const profil = await query("SELECT id, firstname, lastname, DATE_FORMAT(birthday, '%d/%m/%Y') AS birthday, email, image FROM user WHERE id = ?", [id])
+            const categories = await query("SELECT id, title FROM category")
+            const birthday = profil[0].birthday.split('')
+            const day = birthday[0] + birthday[1]
+            const month = birthday[3] + birthday[4]
+            const year = birthday[6] + birthday[7] + birthday[8] + birthday[9]
+            const birthdayDate = { day, month, year }
+            
+            // console.log(profil[0].birthday);
+            console.log(profil[0].birthday);
+            // console.log(birthdayDate);
             // res.json({post, profil})
-            console.log(posts);
-            res.render("user-area", {profil: profil[0], posts})
+            res.render("user-area", {categories, profil: profil[0], posts, birthdayDate, errorProfil: req.flash("errorProfil"), successProfil: req.flash("successProfil"), error: req.flash("error"), success: req.flash("success")})
         } catch(err){
             res.send(err)
         }
@@ -98,11 +121,17 @@ module.exports = {
     // Comment one post ("/comment/:id")
     commentItem: async (req, res) => {
         const idItem = req.params.id;
+        const userID = req.session.userID
         const content = req.body.comment
 
         try {
-            const comment = await query("INSERT INTO comment (content, id_user, id_item) VALUES (?, 3, ?)", [content, idItem])
-            res.json("Votre commentaire a bien été ajouté")
+            if(userID != undefined){
+                const comment = await query("INSERT INTO comment (content, id_user, id_item) VALUES (?, ?, ?)", [content, userID, idItem])
+                // res.json("Votre commentaire a bien été ajouté")
+                res.redirect(`/user/${userID}`)
+            } else {
+                res.redirect("/auth/login")
+            }
         } catch(err){
             res.send(err)
         }
@@ -120,21 +149,29 @@ module.exports = {
     // Like post ("/like/:id")
     like : async (req, res) => {
         const idItem = req.params.id
+        const userID = req.session.userID
 
         try {
-            const checkLike = await query("SELECT id_user, id_item, bad, good FROM status WHERE id_item = ? AND id_user = 2", [idItem])
-            console.log(checkLike.length);
-            if(checkLike.length === 0){
-                const like = await query("INSERT INTO status (good, id_user, id_item) VALUES (1,2,?)", [idItem])
-                console.log(like);
-                res.json("Vous venez de liker l'item")
-            }
-            else if(checkLike[0].bad === 1){
-                const changeForLike = await query("UPDATE status SET bad = 0, good = 1 WHERE status.id_item = ?  AND status.id_user = 2", [idItem])
-                console.log(changeForLike);
-                res.json("Vous venez de liker l'item")
+            if(userID != undefined){
+                const checkLike = await query("SELECT s.id_user, s.id_item, s.bad, s.good, i.id_category FROM status AS s INNER JOIN item AS i ON i.id = s.id_item WHERE s.id_item = ? AND s.id_user = ?", [idItem, userID])
+                console.log(checkLike.length);
+                if(checkLike.length === 0){
+                    const like = await query("INSERT INTO status (good, id_user, id_item) VALUES (1,?,?)", [userID, idItem])
+                    // console.log(like);
+                    // res.json("Vous venez de liker l'item")
+                    res.redirect(`/articles/${checkLike[0].id_category}/${checkLike[0].id_item}`)
+                }
+                else if(checkLike[0].bad === 1){
+                    const changeForLike = await query("UPDATE status SET bad = null, good = 1 WHERE status.id_item = ?  AND status.id_user = ?", [idItem, userID])
+                    // console.log(changeForLike);
+                    // res.json("Vous venez de liker l'item")
+                    res.redirect(`/articles/${checkLike[0].id_category}/${checkLike[0].id_item}`)
+                } else {
+                    // res.json("Vous avez deja liker cette item")
+                    res.redirect(`/articles/${checkLike[0].id_category}/${checkLike[0].id_item}`)
+                }
             } else {
-                res.json("Vous avez deja liker cette item")
+                res.redirect("/auth/login")
             }
         } catch(err){
             res.send(err)
@@ -143,19 +180,27 @@ module.exports = {
     // Dislike post ("/dislike/:id")
     dislike : async (req, res) => {
         const idItem = req.params.id
+        const userID = req.session.userID
         
         try {
-            const checkDislike = await query("SELECT id_user, id_item, bad, good FROM status WHERE id_item = ? AND id_user = 2", [idItem])
-            console.log(checkDislike);
-            if(checkDislike.length === 0){
-                await query("INSERT INTO status (bad, id_user, id_item) VALUES (1,2,?)", [idItem])
-                res.json("Vous venez de disliker l'item")
-            }
-            else if(checkDislike[0].good === 1){
-                await query("UPDATE status SET bad = 1, good = 0 WHERE status.id_item = ?  AND status.id_user = 2", [idItem])
-                res.json("Vous venez de disliker l'item")
+            if(userID != undefined){
+                const checkDislike = await query("SELECT s.id_user, s.id_item, s.bad, s.good, i.id_category FROM status AS s INNER JOIN item AS i ON i.id = s.id_item  WHERE s.id_item = ? AND s.id_user = ?", [idItem, userID])
+                console.log(checkDislike);
+                if(checkDislike.length === 0){
+                    await query("INSERT INTO status (bad, id_user, id_item) VALUES (1,?,?)", [userID, idItem])
+                    // res.json("Vous venez de disliker l'item")
+                    res.redirect(`/articles/${checkDislike[0].id_category}/${checkDislike[0].id_item}`)
+                }
+                else if(checkDislike[0].good === 1){
+                    await query("UPDATE status SET bad = 1, good = null WHERE status.id_item = ?  AND status.id_user = ?", [idItem, userID])
+                    // res.json("Vous venez de disliker l'item")
+                    res.redirect(`/articles/${checkDislike[0].id_category}/${checkDislike[0].id_item}`)
+                } else {
+                    // res.json("Vous avez deja disliker l'item")
+                    res.redirect(`/articles/${checkDislike[0].id_category}/${checkDislike[0].id_item}`)
+                }
             } else {
-                res.json("Vous avez deja disliker l'item")
+                res.redirect('/auth/login')
             }
         } catch(err){
             // res.send(err)
@@ -165,11 +210,12 @@ module.exports = {
     // User edit profile ("/user/edit/profil/:id")
     editProfileUser: async (req, res) => {
         const id = req.params.id
-        const { firstname, lastname, birthday, email } = req.body
+        const { firstname, lastname, year, month, day, email } = req.body
+        const birthday = year + month + day
 
         try{
-            await query("UPDATE users SET firstname = ?, lastname = ?, email = ?, birthday = ? WHERE id = ?", [firstname, lastname, email, birthday, id])
-            res.json("Le profil à été mis a jour")  
+            await query("UPDATE user SET firstname = ?, lastname = ?, email = ?, birthday = ? WHERE id = ?", [firstname, lastname, email, birthday, id])
+            res.redirect(`/user/${id}`) 
         } catch(err) {
             res.send(err)
         }
@@ -179,7 +225,8 @@ module.exports = {
         const id = req.params.id
 
         if (!req.files){
-            res.json("Selectionner une image")
+            req.flash("errorProfil", "Selectionner une image"),
+            res.redirect(`/user/${id}`)
         } else {
     
         let imageUpload = req.files.image
@@ -196,11 +243,15 @@ module.exports = {
                 }
                 try{
                     await query("UPDATE user SET image = ? WHERE id = ?", [image, id])
-                    res.json("L'image du profil à bien été modifier")
+                    req.session.image = image
+                    res.redirect(`/user/${id}`)
                 } catch(err) {
                     res.send(err)
                 }
             });
+        } else {
+            req.flash("errorProfil", "Le format de l'image n'est pas correct"),
+            res.redirect(`/user/${id}`)
         }}
     },
     // User edit password ("/user/edit/profil/:id/password")
@@ -210,9 +261,11 @@ module.exports = {
         password2 = req.body.password2
 
         if(!password || !password2){
-            res.json("Remplissez tout les champs")
+            req.flash("errorProfil", "Remplissez tout les champs"),
+            res.redirect(`/user/${id}`)
         } else if(password !== password2) {
-            res.json("Les mots de passe ne sont pas identiques")
+            req.flash("errorProfil", "Les mots de passe ne corresponde pas"),
+            res.redirect(`/user/${id}`)
         } else {
             bcrypt.hash(password, 10, async (err, hash) => {
                 if(err){
@@ -220,7 +273,8 @@ module.exports = {
                 }
                 try {
                     await query("UPDATE user SET password = ? WHERE id = ?", [hash, id])
-                    res.json("Le mot de passe à bien été mis a jour")
+                    req.flash("successProfil", "Le mot de passe à bien été changé"),
+                    res.redirect(`/user/${id}`)
                 } catch(err){
                     res.send(err)
                 }
@@ -237,7 +291,8 @@ module.exports = {
             if(err){
                 res.send(err)
             } else {
-                res.json("Le compte a bien été supprimé")
+                req.session.destroy()
+                res.redirect("/")
             }
         });
     }

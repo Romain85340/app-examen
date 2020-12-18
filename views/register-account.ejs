@@ -8,12 +8,30 @@
         <div class="row">
             <div class="col-md-12">
                 <!--Form register-->
-                <form class="register" action="/auth/register" method="POST">
+                <form class="register" action="/auth/register" method="POST" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-12 title-login">
                             <h1>Blog Sport</h1>
                         </div>
                     </div>
+
+                    <!---Message Flash-->
+                    <% if(error.length > 0) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <%= error %>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                    <% } %>
+                    <% if(success.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <%= success %>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                    <% } %>
 
                     <div class="row">
                         <div class="col-md-6">
@@ -33,24 +51,24 @@
                         <div class="col-md-2">
                             <label for="exampleInputEmail1">Date de naissance</label>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Date" name="lastname" value="">
+                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Date" name="day" value="">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <label for="exampleInputEmail1">Mois de naissance</label>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Mois" name="phone">
+                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Mois" name="month">
                               </div>
                         </div>
                         <div class="col-md-2">
                             <label for="exampleInputEmail1">Année de naissance</label>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Année" name="lastname" value="">
+                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Année" name="year" value="">
                             </div>
                         </div>
                         <div class="col-md-6 d-flex flex-column">
                                 <label for="exampleInputEmail1">Image de profil</label>
-                                <input type="file" class="input-file">
+                                <input type="file" class="input-file" name="image">
                         </div>
                     </div>
                     <div class="row">

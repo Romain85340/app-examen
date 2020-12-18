@@ -4,6 +4,25 @@
 
 <main class="user-area">
 
+
+    <!---Message Flash-->
+    <% if(errorProfil.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= errorProfil %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+    <% } %>
+    <% if(successProfil.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= successProfil %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+    <% } %>
+
     <!-- Profil user -->
     <section class="container user-profil d-flex justify-content-center">
         <div class="card">
@@ -14,22 +33,198 @@
                   <li class="birthday"><%= profil.birthday %></li>
                   <li class="email"><%= profil.email %></li>
               </ul>
-            <a href="#" class="btn btn-primary">Changer image</a>
-            <a href="#" class="btn btn-primary">Changer information</a>
-            <a href="#" class="btn btn-primary">Changer mot de passe</a>
-            <a href="" class="btn btn-danger">Supprimer compte</a>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#change-picture">Changer d'image</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#change-profil">Changer les informations</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#change-password">Changer de mot de passe</button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-account">Supprimer le compte</button>
+            
+            </div>
+        </div>
+
+        <!-- Modal change image -->
+        <div class="modal fade" id="change-picture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="/user/edit/profil/<%= userSession.userID%>/image?_method=PUT" enctype="multipart/form-data">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Changer d'image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="file" name="image">
+                    </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Modifier</button>
+                </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Modal change info profil -->
+        <div class="modal fade" id="change-profil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="POST" action="/user/edit/profil/<%= userSession.userID%>?_method=PUT" enctype="multipart/form-data">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Changer d'image</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 d-flex flex-column">
+                                    <label for="">Prénom</label>
+                                    <input type="text" name="firstname" value="<%= profil.firstname %>">
+                                </div>
+                                <div class="col-md-6 d-flex flex-column">
+                                    <label for="">Nom</label>
+                                    <input type="text" name="lastname" value="<%= profil.lastname %>">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 d-flex flex-column">
+                                    <label for="">Email</label>
+                                    <input type="text" name="email" value="<%= profil.email %>">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 d-flex flex-column">
+                                    <label for="">Date de naissance</label>
+                                    <div class="birthday d-flex justify-content-around">
+                                        <input type="text" name="day" style="width: 70px;" value="<%= birthdayDate.day %>">
+                                        <input type="text" name="month" style="width: 70px;" value="<%= birthdayDate.month %>">
+                                        <input type="text" name="year" style="width: 70px;" value="<%= birthdayDate.year %>">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </form>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Modal change password -->
+        <div class="modal fade" id="change-password" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="/user/edit/profil/<%= userSession.userID%>/password?_method=PUT" enctype="multipart/form-data">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Changer de mot de passe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 d-flex flex-column">
+                                <label for="">Choisissez votre mot de passe</label>
+                                <input type="password" name="password">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 d-flex flex-column">
+                                <label for="">Confirmer</label>
+                                <input type="text" name="password2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Modifier</button>
+                </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Modal delete account -->
+        <div class="modal fade" id="delete-account" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="/user/<%= profil.id %>?_method=DELETE">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Supprimer le compte</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Etes vous vraiment sur de vouloir supprimer votre compte ?</p>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                </div>
+            </div>
             </div>
         </div>
     </section>
 
-    <!-- List post created -->
-    <section class="list-post d-flex flex-column align-items-center">
+    <!---Message Flash-->
+    <% if(error.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= error %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+    <% } %>
+    <% if(success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= success %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+    <% } %>
 
-        <% if (posts.length === 0) { %>
-            <h1>Vous n'avez pas crée d'article</h1>
-            <a href="" class="no-post-callaction">Crée votre propre article !</a>
-        <% } else { %>
-        <h1>Les articles que vous avez crée</h1>
+    <!-- Add post -->
+    <section class="form-post">
+        <h1 style="text-align: center;">Cree votre propre article</h1>
+        <form action="/user/item/<%= profil.id %>" method="POST" enctype="multipart/form-data" class="container">
+          <div class="row title-category">
+            <div class="col-md-6">
+              <label for="Title">Titre de l'article</label>
+              <input id="Title" type="text" class="form-control" placeholder="Titre" name="title">
+            </div>
+            <div class="col-md-6">
+              <label for="inputState">Categorie</label>
+              <select id="inputState" class="form-control" name="category">
+                <option selected>Choisir</option>
+                <% categories.forEach(function(entry) {%>
+                    <option value="<%= entry.id%>"><%= entry.title%></option>
+                <%});%>
+              </select>
+            </div>
+          </div>
+          <div class="content">
+            <label for="validationTextarea">Contenu de l'article</label>
+            <textarea class="form-control" id="validationTextarea" placeholder="Ajoutez le contenu de votre article" name="content"></textarea>
+          </div>
+          <div class="d-flex flex-column image">
+            <label for="imageUpload">Ajoutez une image a votre article</label>
+            <input id="imageUpload" type="file" name="image" style="padding: 4px; background: #fff">
+          </div>
+          <button class="btn btn-primary" type="submit">Ajoutez</button>
+        </form>
+    </section>
+
+    <!-- List post created -->
+    <section class="list-post d-flex flex-column align-items-center" id="list-post">
+
+        <% if (posts.length > 0) { %>
+        <h1>L(es) article(s) que vous avez crée</h1>
         <div id="accordion" class="w-75 p-3">
 
             <% posts.forEach(function(entry) {%>
@@ -61,9 +256,12 @@
                       </div>
                       <div class="col-lg-1">
                         <ul class="btn">
-                            <li><a href="">Editer</a></li>
                             <li><a href="">Modifier</a></li>
-                            <li><a href="">Supprimer</a></li>
+                            <li>
+                                <form action="/user/item/<%= entry.id_post %>?_method=DELETE" method="POST">
+                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
                   </div>

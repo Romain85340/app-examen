@@ -7,6 +7,7 @@ const path = require('path');
 const session = require('express-session')
 require('dotenv').config();
 const methodOverride = require('method-override');
+const flash = require('connect-flash');
 const PORT = 3000;
 
 // Express
@@ -45,7 +46,12 @@ global.query = query;
 app.set('view engine', 'ejs');
 // Method Override
 app.use(methodOverride('_method'))
+// Connect flash
+app.use(flash());
 
+
+///// Middleware ////////
+const { checkUser, actionUser } = require('./middleware/auth')
 
 ///// Controllers ///////
 // All access
@@ -94,7 +100,7 @@ app.use(function(req, res, next){
   const userIMG = req.session.image
 
   res.locals.userSession = {userID, roleID, userNAME, userLASTNAME, userIMG}
-  console.log(res.locals.userSession);
+  // console.log(res.locals.userSession);
   next();
 })
 
@@ -111,18 +117,18 @@ app.get("/auth/login", getLogin) // Get login page
 app.post("/auth/login", login) // User login
 app.get("/auth/logout", logout) // Disconnect user
 // User area/power
-app.get("/user/:id", getUserPage) // Show user page
-app.delete("/user/:id", userDeleteAccount) // User delete account
-app.post("/user/item/:id", createItem) // User add post
-app.put("/user/edit/item/:id", editItem) // User edit post
-app.put("/user/edit/profil/:id", editProfileUser) // User edit profile
-app.put("/user/edit/profil/:id/image", editImageUser) // User edit image profile
-app.put("/user/edit/profil/:id/password", editPasswordUser) // User edit password
-app.post("/comment/:id", commentItem) // Comment one post
-app.delete("/user/item/:id", deleteItem) // User delete post
-app.delete("/user/comment/:id", deleteComment) // User delete comment
-app.get("/like/:id", like) // Like post
-app.get("/dislike/:id", dislike) // Dislike post
+app.get("/user/:id", checkUser, getUserPage) // Show user page
+app.delete("/user/:id", actionUser, userDeleteAccount) // User delete account
+app.post("/user/item/:id", actionUser, createItem) // User add post
+app.put("/user/edit/item/:id", actionUser, editItem) // User edit post
+app.put("/user/edit/profil/:id", actionUser, editProfileUser) // User edit profile
+app.put("/user/edit/profil/:id/image", actionUser, editImageUser) // User edit image profile
+app.put("/user/edit/profil/:id/password", actionUser, editPasswordUser) // User edit password
+app.post("/comment/:id", actionUser, commentItem) // Comment one post
+app.delete("/user/item/:id", actionUser, deleteItem) // User delete post
+app.delete("/user/comment/:id", actionUser, deleteComment) // User delete comment
+app.get("/like/:id", actionUser, like) // Like post
+app.get("/dislike/:id", actionUser, dislike) // Dislike post
 // Admin power/Area
 app.get("/admin/user", showAllUser) // Display list user
 app.get("/admin/item", showItem) // Display list item

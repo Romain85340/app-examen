@@ -36,12 +36,7 @@
           <li style="color: #007bff;"><span><%= entry.comment%> personnes ont commenté </span><i class="fas fa-comment"></i></li>
         </ul>
         <div class="btn-card d-flex justify-content-between flex-wrap">
-          <div class="btn-status d-flex flex-wrap">
-            <a class="like" href="">J'aime</a>
-            <a class="dislike" href="">Je n'aime pas</a>
-            <a href="">Commenter</a>
-          </div>
-          <a href="#" class="btn btn-primary">Lire l'article</a>
+          <a href="/articles/<%= entry.id_category%>/<%= entry.id%>" class="btn btn-primary">Lire l'article</a>
         </div>
       </div>
     </div>
@@ -63,7 +58,7 @@
             <img src="<%= entry.image%>" class="card-img-top" alt="...">
             <div class="card-category-content text-center">
               <h2><%= entry.title%></h2>
-              <a href="#" class="btn btn-primary">Voir les articles</a>
+              <a href="/articles/<%= entry.id%>" class="btn btn-primary">Voir les articles</a>
             </div>
           </div>
         </div>

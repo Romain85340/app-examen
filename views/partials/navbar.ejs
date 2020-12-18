@@ -20,7 +20,7 @@
         <% } else { %>
           <li class="nav-item active d-flex">
             <img src="<%= userSession.userIMG%>" alt="" style="width: 30px; height: 30px; border-radius: 50%; margin-top: 5px; margin-left: 8px;">
-            <a class="nav-link nav-button text-light" href="/auth/logout" style="text-transform: capitalize;"><%= userSession.userNAME%></a>
+            <a class="nav-link nav-button text-light" href="/user/<%= userSession.userID%>" style="text-transform: capitalize;"><%= userSession.userNAME%></a>
           </li>
           <li class="nav-item active">
             <a class="nav-link nav-button text-light" href="/auth/logout">Déconnexion</a>
