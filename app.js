@@ -51,7 +51,7 @@ app.use(flash());
 
 
 ///// Middleware ////////
-const { checkUser, actionUser } = require('./middleware/auth')
+const { checkUser, actionUser, checkRole } = require('./middleware/auth')
 
 ///// Controllers ///////
 // All access
@@ -79,7 +79,8 @@ const { getRegister,
         getLogin,
         logout } = require("./controllers/auth")
 // Admin power
-const { showAllUser,
+const { adminHome,
+        showAllUser,
         statusUser,
         statusItem,
         adminDeleteItem,
@@ -130,8 +131,9 @@ app.delete("/user/item/:id", actionUser, deleteItem) // User delete post
 app.delete("/user/comment/:id", actionUser, deleteComment) // User delete comment
 app.get("/like/:id", actionUser, like) // Like post
 app.get("/dislike/:id", actionUser, dislike) // Dislike post
-app.get("/delete-status/:id", deleteLikeOrDislike) // Delete status of this post
+app.get("/delete-status/:id", actionUser, deleteLikeOrDislike) // Delete status of this post
 // Admin power/Area
+app.get("/admin/:id", checkRole, adminHome) // Display admin home page
 app.get("/admin/user", showAllUser) // Display list user
 app.get("/admin/item", showItem) // Display list item
 app.post("/admin/item", adminCreateItem) // Create post

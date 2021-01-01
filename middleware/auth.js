@@ -16,5 +16,12 @@ module.exports = {
         }else {
             res.redirect("/auth/login")
         }
+    },
+    checkRole: (req, res, next) => {
+        if(req.session.roleID == 2){
+            next();
+        } else {
+            res.redirect("/")
+        }
     }
 }

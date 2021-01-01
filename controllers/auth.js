@@ -6,7 +6,7 @@ module.exports = {
     },
     // Display register page
     getRegister: (req, res) => {
-        res.render("register-account", {error: req.flash("error"), success: req.flash("success")})
+        res.render("register", {error: req.flash("error"), success: req.flash("success")})
     },
     // Register account ("/auth/register")
     register: async (req, res) => {
@@ -52,7 +52,7 @@ module.exports = {
                             await query ("INSERT INTO user (image, firstname, lastname, birthday, email, password, id_role) VALUES (?, ?, ?, ?, ?, ?, 1)", [image, firstname, lastname, birthday, email, hash]);       
                             if(!err){
                                 // res.json("Vous etes enregistrer")
-                                req.flash("success", "Vous etes enregistrer"),
+                                req.flash("success", "Vous etes enregistrer, connectez vous!"),
                                 res.redirect(`/auth/login`) 
                             } else {
                                 res.send(err)
@@ -110,7 +110,11 @@ module.exports = {
                                     // console.log("session",  req.session);
                                 
                                     // res.json("Vous etes connecté")
-                                    res.redirect("/")
+                                    if(req.session.roleID == 2){
+                                        res.redirect(`/admin/${req.session.userID}`)
+                                    } else {
+                                        res.redirect("/")
+                                    }
                                 
                                 } else {
                                     res.send(err)
@@ -118,7 +122,8 @@ module.exports = {
                             });
                         }
                     } else {
-                        res.json("Email ou mot de passe incorrect")
+                        req.flash("error", "Email ou mot de passe incorrect"),
+                        res.redirect(`/auth/login`)
                     }
                 })
             }

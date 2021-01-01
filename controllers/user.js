@@ -17,7 +17,7 @@ module.exports = {
         } else {
             if(!req.files){
                 // res.json("Ajouter une image a votre article")
-                req.flash("error", "Ajoutez une categorie"),
+                req.flash("error", "Ajoutez une image à votre article"),
                 res.redirect(`/user/${userID}`)
             } else {
                 let imageUpload = req.files.image
@@ -101,10 +101,9 @@ module.exports = {
 
         try {
             const posts = await query("SELECT i.id AS id_post, c.title AS category ,u.id, u.firstname, u.lastname, i.title, i.content, i.image, i.date, ifnull(count(s.bad), 0) as bad_status, ifnull(count(s.good), 0) AS good_status, ifnull(count(comment.id), 0) AS comment FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category LEFT OUTER JOIN comment ON comment.id_item = i.id LEFT OUTER JOIN status AS s ON s.id_item = i.id WHERE u.id = ? GROUP BY i.id ORDER BY i.date DESC", [id])
-            const profil = await query("SELECT id, firstname, lastname, DATE_FORMAT(birthday, '%d/%m/%Y') AS birthday, email, image FROM user WHERE id = ?", [id])
+            const profil = await query("SELECT  u.id, u.firstname, u.lastname, DATE_FORMAT(u.birthday, '%d/%m/%Y') AS birthday, u.email, u.image, ifnull(count(s.good) + count(s.bad), 0) AS status, ifnull((SELECT count(id) FROM item WHERE id_user = u.id GROUP BY id_user), 0) AS nb_item FROM user AS u LEFT OUTER JOIN status AS s ON s.id_user = u.id WHERE u.id = ? GROUP BY u.id", [id])
             const categories = await query("SELECT id, title FROM category")
             const listStatus = await query("SELECT i.id AS id_post, i.id_category, i.title, s.bad, s.good FROM status AS s INNER JOIN item AS i ON i.id = s.id_item WHERE s.id_user = ?", [id])
-            console.log(listStatus);
             const birthday = profil[0].birthday.split('')
             const day = birthday[0] + birthday[1]
             const month = birthday[3] + birthday[4]
@@ -112,10 +111,10 @@ module.exports = {
             const birthdayDate = { day, month, year }
             
             // console.log(profil[0].birthday);
-            console.log(profil[0].birthday);
+            console.log(profil);
             // console.log(birthdayDate);
             // res.json({post, profil})
-            res.render("user-area", {categories, listStatus, profil: profil[0], posts, birthdayDate, errorProfil: req.flash("errorProfil"), successProfil: req.flash("successProfil"), error: req.flash("error"), success: req.flash("success")})
+            res.render("user-home-page", {categories, listStatus, profil: profil[0], posts, birthdayDate, errorProfil: req.flash("errorProfil"), successProfil: req.flash("successProfil"), error: req.flash("error"), success: req.flash("success")})
         } catch(err){
             res.send(err)
         }
@@ -154,6 +153,7 @@ module.exports = {
         const userID = req.session.userID
         try {
             await query("DELETE FROM status WHERE id_item = ?", [id])
+            req.flash("success", "L'avis a bien été retirer"),
             res.redirect(`/user/${userID}`)
         } catch(err) {
             res.send(err)
@@ -172,20 +172,20 @@ module.exports = {
                     const like = await query("INSERT INTO status (good, id_user, id_item) VALUES (1,?,?)", [userID, idItem])
                     // console.log(like);
                     // res.json("Vous venez de liker l'item")
-                    res.redirect(`back`)
+                    res.redirect("back")
                 }
                 else if(checkLike[0].bad === 1){
                     const changeForLike = await query("UPDATE status SET bad = null, good = 1 WHERE status.id_item = ?  AND status.id_user = ?", [idItem, userID])
                     // console.log(changeForLike);
                     // res.json("Vous venez de liker l'item")
-                    res.redirect(`back`)
+                    res.redirect("back")
                 } else {
                     // res.json("Vous avez deja liker cette item")
-                    res.redirect(`back`)
+                    res.redirect("back")
                 }
             } else {
                 req.flash("error", "Vous devez etre connecté"),
-                res.redirect(`/auth/login`)
+                res.redirect("/auth/login")
             }
         } catch(err){
             res.send(err)
@@ -229,6 +229,7 @@ module.exports = {
 
         try{
             await query("UPDATE user SET firstname = ?, lastname = ?, email = ?, birthday = ? WHERE id = ?", [firstname, lastname, email, birthday, id])
+            req.flash("success", "Les informations du profil ont bien été mis à jour"),
             res.redirect(`/user/${id}`) 
         } catch(err) {
             res.send(err)
@@ -239,7 +240,7 @@ module.exports = {
         const id = req.params.id
 
         if (!req.files){
-            req.flash("errorProfil", "Selectionner une image"),
+            req.flash("error", "Selectionner une image"),
             res.redirect(`/user/${id}`)
         } else {
     
@@ -258,13 +259,14 @@ module.exports = {
                 try{
                     await query("UPDATE user SET image = ? WHERE id = ?", [image, id])
                     req.session.image = image
+                    req.flash("success", "L'image a bien été mis à jour"),
                     res.redirect(`/user/${id}`)
                 } catch(err) {
                     res.send(err)
                 }
             });
         } else {
-            req.flash("errorProfil", "Le format de l'image n'est pas correct"),
+            req.flash("error", "Le format de l'image n'est pas correct"),
             res.redirect(`/user/${id}`)
         }}
     },
@@ -275,10 +277,10 @@ module.exports = {
         password2 = req.body.password2
 
         if(!password || !password2){
-            req.flash("errorProfil", "Remplissez tout les champs"),
+            req.flash("error", "Remplissez tout les champs"),
             res.redirect(`/user/${id}`)
         } else if(password !== password2) {
-            req.flash("errorProfil", "Les mots de passe ne corresponde pas"),
+            req.flash("error", "Les mots de passe ne correspondent pas"),
             res.redirect(`/user/${id}`)
         } else {
             bcrypt.hash(password, 10, async (err, hash) => {
@@ -287,7 +289,7 @@ module.exports = {
                 }
                 try {
                     await query("UPDATE user SET password = ? WHERE id = ?", [hash, id])
-                    req.flash("successProfil", "Le mot de passe à bien été changé"),
+                    req.flash("success", "Le mot de passe à bien été changé"),
                     res.redirect(`/user/${id}`)
                 } catch(err){
                     res.send(err)

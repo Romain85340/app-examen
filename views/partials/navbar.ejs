@@ -1,31 +1,33 @@
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg fixed-top bg-dark"> 
-    <a class="nav-link text-light" href="/">Blog Sport</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"><i class="fas fa-bars" style="color:#fff; font-size:28px;"></i></span>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="#">Actus Sportives</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" style="border-color: rgba(255, 255, 255, 1);" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon" style="color: #fff !important"></span>
     </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item active">
-          <a class="nav-link nav-button text-light" href="/#new-post">Articles récents</a>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <!-- If user start-->
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item px-lg-4 d-flex align-items-center">
+          <a class="nav-link text-uppercase text-expanded" href="/#new-post">Actualités récente</a>
         </li>
-        <li class="nav-item active">
-          <a class="nav-link nav-button text-light" href="/#categories">Les sports</a>
+        <li class="nav-item px-lg-4 d-flex align-items-center">
+          <a class="nav-link text-uppercase text-expanded" href="/#category">Sports</a>
         </li>
         <% if(userSession.userID == undefined) { %>
-          <li class="nav-item active">
-            <a class="nav-link nav-button text-light" href="/auth/login">Connexion</a>
-          </li>
+        <li class="nav-item px-lg-4 d-flex align-items-center">
+          <a class="nav-link text-uppercase text-expanded" href="/auth/login">Connexion</a>
+        </li>
         <% } else { %>
-          <li class="nav-item active d-flex">
-            <img src="<%= userSession.userIMG%>" alt="" style="width: 30px; height: 30px; border-radius: 50%; margin-top: 5px; margin-left: 8px;">
-            <a class="nav-link nav-button text-light" href="/user/<%= userSession.userID%>" style="text-transform: capitalize;"><%= userSession.userNAME%></a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link nav-button text-light" href="/auth/logout">Déconnexion</a>
-          </li>
+        <li class="nav-item px-lg-4 d-flex align-items-center">
+          <a class="nav-link text-uppercase text-expanded" href="/user/<%= userSession.userID%>"><img class="img-profil" src="<%= userSession.userIMG%>" alt=""><span class="name-profil"><%= userSession.userNAME%></span></a>
+        </li>
+        <li class="nav-item px-lg-4 d-flex align-items-center">
+          <a class="nav-link text-uppercase text-expanded" href="/auth/logout">Déconnexion</a>
+        </li>
         <% } %>
       </ul>
+      <!-- If user end-->
     </div>
+  </div>
 </nav>

@@ -1,6 +1,16 @@
 const fileUpload = require("express-fileupload");
 
 module.exports = {
+    adminHome: async (req, res) => {
+        const id = req.params.id
+        const users = await query("SELECT ifnull(count(user.id), 0) AS nb_user FROM user")
+        const posts = await query("SELECT ifnull(count(item.id), 0) AS nb_post FROM item")
+        const categories = await query("SELECT ifnull(count(category.id), 0) AS nb_category FROM category")
+        const profil = await query("SELECT  u.id, u.firstname, u.lastname, DATE_FORMAT(u.birthday, '%d/%m/%Y') AS birthday, u.email, u.image, ifnull(count(s.good) + count(s.bad), 0) AS status, ifnull((SELECT count(id) FROM item WHERE id_user = u.id GROUP BY id_user), 0) AS nb_item FROM user AS u LEFT OUTER JOIN status AS s ON s.id_user = u.id WHERE u.id = ? GROUP BY u.id", [id])
+
+
+        res.json({users, posts, categories, profil})
+    },
     // Display list user ("/admin/user")
     showAllUser: async (req, res) => {
         try {
