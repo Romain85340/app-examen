@@ -19,12 +19,21 @@
           <a class="nav-link text-uppercase text-expanded" href="/auth/login">Connexion</a>
         </li>
         <% } else { %>
-        <li class="nav-item px-lg-4 d-flex align-items-center">
-          <a class="nav-link text-uppercase text-expanded" href="/user/<%= userSession.userID%>"><img class="img-profil" src="<%= userSession.userIMG%>" alt=""><span class="name-profil"><%= userSession.userNAME%></span></a>
-        </li>
-        <li class="nav-item px-lg-4 d-flex align-items-center">
-          <a class="nav-link text-uppercase text-expanded" href="/auth/logout">Déconnexion</a>
-        </li>
+          <% if(userSession.roleID == 1) { %>
+          <li class="nav-item px-lg-4 d-flex align-items-center">
+            <a class="nav-link text-uppercase text-expanded" href="/user/<%= userSession.userID%>"><img class="img-profil" src="<%= userSession.userIMG%>" alt=""><span class="name-profil"><%= userSession.userNAME%></span></a>
+          </li>
+          <li class="nav-item px-lg-4 d-flex align-items-center">
+            <a class="nav-link text-uppercase text-expanded" href="/auth/logout">Déconnexion</a>
+          </li>
+          <% } else { %>
+          <li class="nav-item px-lg-4 d-flex align-items-center">
+            <a class="nav-link text-uppercase text-expanded" href="/admin/<%= userSession.userID%>"><img class="img-profil" src="<%= userSession.userIMG%>" alt=""><span class="name-profil"><%= userSession.userNAME%></span></a>
+          </li>
+          <li class="nav-item px-lg-4 d-flex align-items-center">
+            <a class="nav-link text-uppercase text-expanded" href="/auth/logout">Déconnexion</a>
+          </li>
+          <% } %>
         <% } %>
       </ul>
       <!-- If user end-->

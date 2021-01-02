@@ -85,12 +85,14 @@ const { adminHome,
         statusItem,
         adminDeleteItem,
         showItem,
+        showCategory,
         adminCreateItem,
         getListComment,
         getListUserReview,
         adminCreateCategory,
         adminDeleteCategory,
-        adminUpdateCategory } = require("./controllers/admin")
+        adminUpdateCategory,
+        adminDeleteUser } = require("./controllers/admin")
 
 
 ////// Session //////
@@ -133,11 +135,12 @@ app.get("/like/:id", actionUser, like) // Like post
 app.get("/dislike/:id", actionUser, dislike) // Dislike post
 app.get("/delete-status/:id", actionUser, deleteLikeOrDislike) // Delete status of this post
 // Admin power/Area
-app.get("/admin/:id", checkRole, adminHome) // Display admin home page
-app.get("/admin/user", showAllUser) // Display list user
-app.get("/admin/item", showItem) // Display list item
+app.get("/admin/user", checkRole, showAllUser) // Display list user
+app.get("/admin/item", checkRole, showItem) // Display list item
+app.get("/admin/category", checkRole, showCategory) // Display list categories
 app.post("/admin/item", adminCreateItem) // Create post
 app.post("/admin/category", adminCreateCategory) // Create category
+app.get("/admin/:id", checkRole, adminHome) // Display admin home page
 app.get("/admin/user/:id/status", statusUser) // Switch status user block/unblock
 app.get("/admin/item/:id/status", statusItem) // Switch status post visible/unvisible
 app.delete("/admin/delete/item/:id", adminDeleteItem) // Delete one post
@@ -145,6 +148,7 @@ app.delete("/admin/category/:id", adminDeleteCategory) // Delete a category
 app.get("/admin/item/:id/comment", getListComment) // Show list of comment of item
 app.get("/admin/item/:id/user-review", getListUserReview) // Show list of like and dislike of item
 app.put("/admin/category/edit/:id", adminUpdateCategory) // Admin update category
+app.delete("/admin/delete/user/:id", adminDeleteUser) // Admin delete user
 
 
 /////// Serveur /////////

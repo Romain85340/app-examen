@@ -3,19 +3,24 @@ const fileUpload = require("express-fileupload");
 module.exports = {
     adminHome: async (req, res) => {
         const id = req.params.id
-        const users = await query("SELECT ifnull(count(user.id), 0) AS nb_user FROM user")
-        const posts = await query("SELECT ifnull(count(item.id), 0) AS nb_post FROM item")
-        const categories = await query("SELECT ifnull(count(category.id), 0) AS nb_category FROM category")
-        const profil = await query("SELECT  u.id, u.firstname, u.lastname, DATE_FORMAT(u.birthday, '%d/%m/%Y') AS birthday, u.email, u.image, ifnull(count(s.good) + count(s.bad), 0) AS status, ifnull((SELECT count(id) FROM item WHERE id_user = u.id GROUP BY id_user), 0) AS nb_item FROM user AS u LEFT OUTER JOIN status AS s ON s.id_user = u.id WHERE u.id = ? GROUP BY u.id", [id])
 
-
-        res.json({users, posts, categories, profil})
+        try {
+            const users = await query("SELECT ifnull(count(user.id), 0) AS nb_user FROM user")
+            const posts = await query("SELECT ifnull(count(item.id), 0) AS nb_post FROM item")
+            const categories = await query("SELECT id, title FROM category")
+            const category = await query("SELECT ifnull(count(category.id), 0) AS nb_category FROM category")
+            const profil = await query("SELECT  u.id, u.firstname, u.lastname, DATE_FORMAT(u.birthday, '%d/%m/%Y') AS birthday, u.email, u.image, ifnull(count(s.good) + count(s.bad), 0) AS status, ifnull((SELECT count(id) FROM item WHERE id_user = u.id GROUP BY id_user), 0) AS nb_item FROM user AS u LEFT OUTER JOIN status AS s ON s.id_user = u.id WHERE u.id = ? GROUP BY u.id", [id])
+            res.render("admin-home-page", {users: users[0], posts: posts[0], category: category[0], profil: profil[0], categories, error: req.flash("error"), success: req.flash("success")})
+        } catch(err) {
+            res.send(err)
+        }
     },
     // Display list user ("/admin/user")
     showAllUser: async (req, res) => {
         try {
-            const users = await query(`SELECT u.firstname, u.lastname, DATE_FORMAT(u.birthday, "%d/%m/%Y") AS birthday, u.email, u.image, r.name FROM user AS u INNER JOIN role AS r ON r.id = u.id_role`)
-            res.json({ users })
+            const users = await query(`SELECT  u.id, u.firstname, u.lastname, u.status AS status_user, DATE_FORMAT(u.birthday, "%d/%m/%Y") AS birthday, u.email, u.image, ifnull(count(s.good) + count(s.bad), 0) AS status, ifnull((SELECT count(id) FROM item WHERE id_user = u.id GROUP BY id_user), 0) AS nb_item FROM user AS u LEFT OUTER JOIN status AS s ON s.id_user = u.id GROUP BY u.id;`)
+            // res.json({ users })
+            res.render("admin-user-list", {users, error: req.flash("error"), success: req.flash("success")})
         } catch(err){
             res.send(err)
         }
@@ -26,13 +31,15 @@ module.exports = {
 
         try {
             const switchStatus = await query("SELECT status FROM user WHERE id = ?", [id])
-            if(switchStatus[0].status === 2){
+            if(switchStatus[0].status === 0){
                 await query("UPDATE user SET status = 1 WHERE id = ?", [id])
-            } else if (switchStatus[0].status === 1) {
-                await query("UPDATE user SET status = 2 WHERE id = ?", [id])
+                req.flash("success", "L'utilisateur est dorénavant débloqué"),
+                res.redirect(`/admin/user`)
+            } else {
+                await query("UPDATE user SET status = 0 WHERE id = ?", [id])
+                req.flash("success", "L'utilisateur est dorénavant bloqué"),
+                res.redirect(`/admin/user`)
             }
-            res.json(switchStatus)
-
         }catch(err){
             res.send(err)
         }
@@ -45,10 +52,13 @@ module.exports = {
             const switchStatus = await query("SELECT status FROM item WHERE id = ?", [id])
             if(switchStatus[0].status === 0){
                 await query("UPDATE item SET status = 1 WHERE id = ?", [id])
-            } else if (switchStatus[0].status === 1) {
+                req.flash("success", "L'article est dorénavant visible"),
+                res.redirect(`/admin/item`)
+            } else {
                 await query("UPDATE item SET status = 0 WHERE id = ?", [id])
+                req.flash("success", "L'article est dorénavant invisible"),
+                res.redirect(`/admin/item`)
             }
-            res.json(switchStatus)
         } catch(err){
             res.send(err)
         }
@@ -62,7 +72,9 @@ module.exports = {
               if(error){
                   res.send(error)
               } else {
-                  res.json("L'article à bien été supprimé")
+                  // res.json("L'article à bien été supprimé")
+                  req.flash("success", "L'article à bien été supprimer"),
+                  res.redirect(`/admin/item`)
               }
             }
         );
@@ -70,8 +82,9 @@ module.exports = {
     // Display list item ("/admin/item")
     showItem: async (req, res) => {
         try {
-            const items = await query("SELECT i.id, c.title AS category , u.firstname, u.lastname, i.title, i.content, i.image, i.date FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category")
-            res.json({items})
+            const items = await query("SELECT i.id, i.status AS status_item, c.title AS category, u.firstname, u.lastname, i.title, i.content, i.image, DATE_FORMAT(i.date, '%d/%m/%Y') AS date, ifnull(count(s.bad), 0) as bad_status, ifnull(count(s.good), 0) AS good_status FROM item AS i INNER JOIN user AS u ON u.id = i.id_user INNER JOIN category AS c ON c.id = i.id_category LEFT OUTER JOIN status AS s ON s.id_item = i.id GROUP BY i.id ORDER BY i.date DESC")
+            // res.json({items})
+            res.render("admin-post-list", {items, error: req.flash("error"), success: req.flash("success")})
         } catch(err){
             res.send(err)
         }
@@ -81,12 +94,17 @@ module.exports = {
         const title = req.body.title
         const content = req.body.content
         const id_category = req.body.category
+        const id_user = req.session.userID
         
-        if(!title || !content || !id_category ){
-            res.json("Remplissez tout les champs")
+        if(!title || !content || id_category === "null" ){
+            // res.json("Remplissez tout les champs")
+            req.flash("error", "Remplissez tout les champs"),
+            res.redirect(`/admin/${id_user}`)
         } else {
             if(!req.files){
-                res.json("Ajouter une image a votre article")
+                // res.json("Ajouter une image a votre article")
+                req.flash("error", "Ajouter une image a votre article"),
+                res.redirect(`/admin/${id_user}`)
             } else {
                 let imageUpload = req.files.image
                 let image = `/images/${imageUpload.name}`
@@ -97,14 +115,18 @@ module.exports = {
                             res.send(err)
                         }
                         try {
-                            const post = await query("INSERT INTO item (title, content, image, date, id_user, id_category, status) VALUES (?, ?, ?, now(), ?, 3, 1)", [title, content, image, id_category])
-                            res.json({post})
+                            const post = await query("INSERT INTO item (title, content, image, date, id_user, id_category, status) VALUES (?, ?, ?, now(), ?, ?, 1)", [title, content, image, id_user, id_category])
+                            // res.json({post})
+                            req.flash("success", "L'article à bien été crée"),
+                            res.redirect(`/admin/${id_user}`)
                         }catch(err){
                             res.send(err)
                         }
                     })
                 } else {
-                    res.json("L'image n'a pas le format adequate")
+                    // res.json("L'image n'a pas le format adequate")
+                    req.flash("error", "L'image n'a pas le format adéquate"),
+                    res.redirect(`/admin/${id_user}`)
                 }
             }
         }
@@ -140,12 +162,17 @@ module.exports = {
     adminCreateCategory: async (req, res) => {
         const title = req.body.title
         const content = req.body.content
+        const id_user = req.session.userID
         
         if(!title || !content){
-            res.json("Remplissez tout les champs")
+            // res.json("Remplissez tout les champs")
+            req.flash("error", "Remplissez tout les champs"),
+            res.redirect(`/admin/${id_user}`)
         } else {
             if(!req.files){
-                res.json("Ajouter une image a votre article")
+                // res.json("Ajouter une image a votre article")
+                req.flash("error", "Ajouter une image à la categorie"),
+                res.redirect(`/admin/${id_user}`)
             } else {
                 let imageUpload = req.files.image
                 let image = `/images/${imageUpload.name}`
@@ -156,14 +183,18 @@ module.exports = {
                             res.send(err)
                         }
                         try {
-                            await query("INSERT INTO category (title, content, image, date, id_user) VALUES (?, ?, ?, NOW(), 20)", [title, content, image])
-                            res.json("La categorie à bien été ajoutée")
+                            await query("INSERT INTO category (title, content, image, date, id_user) VALUES (?, ?, ?, NOW(), ?)", [title, content, image, id_user])
+                            // res.json("La categorie à bien été ajoutée")
+                            req.flash("success", "La categorie à bien été ajoutée"),
+                            res.redirect(`/admin/${id_user}`)
                         }catch(err){
                             res.send(err)
                         }
                     })
                 } else {
-                    res.json("L'image n'a pas le format adequate")
+                   // res.json("L'image n'a pas le format adequate")
+                   req.flash("error", "L'image n'a pas le format adequate"),
+                    res.redirect(`/admin/${id_user}`)
                 }
             }
         }
@@ -182,7 +213,7 @@ module.exports = {
         );
     },
     // Edit category ('/admin/category/edit/:id')
-    adminUpdateCategory: (req, res) => {
+    adminUpdateCategory: async (req, res) => {
         const id = req.params.id
 
         if (!req.files){
@@ -209,5 +240,28 @@ module.exports = {
                 }
             });
         }}
+    },
+    // Delete user ('/admin/delete/user/:id')
+    adminDeleteUser: async (req, res) => {
+        const id = req.params.id
+
+        try {
+            await query("DELETE FROM user WHERE id = ?", [id])
+            req.flash("success", "L'utilisateur a bien été supprimé"),
+            res.redirect(`/admin/user`)
+        } catch(err){
+            res.send(err)
+        }
+
+    },
+    // Display list of category ('/admin/category')
+    showCategory: async (req, res) => {
+        try {
+            const categories = await query("SELECT id, image, title, content FROM category")
+            // res.json({categories})
+            res.render("admin-category-list", {categories})
+        } catch(err) {
+            res.send(err)
+        }
     }
 }

@@ -298,7 +298,7 @@
                             <div class="col-md-12">
                                 <label for="inputState">Categorie</label>
                                 <select id="inputState" class="form-control" name="category">
-                                <option selected>Choisir</option>
+                                <option selected value="null">Selectionner une catégorie</option>
                                 <% categories.forEach(function(entry) {%>
                                     <option value="<%= entry.id%>"><%= entry.title%></option>
                                 <%});%>

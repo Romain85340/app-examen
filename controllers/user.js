@@ -10,7 +10,7 @@ module.exports = {
         const id_category = req.body.category
         const userID = req.session.userID
         
-        if(!title || !content || !id_category ){
+        if(!title || !content || id_category === "null" ){
             // res.json("Remplissez tout les champs")
             req.flash("error", "Remplissez tout les champs"),
                 res.redirect(`/user/${userID}`)
@@ -114,7 +114,7 @@ module.exports = {
             console.log(profil);
             // console.log(birthdayDate);
             // res.json({post, profil})
-            res.render("user-home-page", {categories, listStatus, profil: profil[0], posts, birthdayDate, errorProfil: req.flash("errorProfil"), successProfil: req.flash("successProfil"), error: req.flash("error"), success: req.flash("success")})
+            res.render("user-home-page", {categories, listStatus, profil: profil[0], posts, birthdayDate, error: req.flash("error"), success: req.flash("success")})
         } catch(err){
             res.send(err)
         }
