@@ -20,7 +20,7 @@ li {
   width: 15rem;
 }
 
-#admin-edit-category {
+#admin-edit-post {
   min-width: 100vw;
 }
 
@@ -44,10 +44,10 @@ li {
 .sidebar-heading h1 span {
   text-transform: capitalize;
 }
-#admin-edit-category {
+#admin-edit-post {
     margin-bottom: 50px;
 }
-#admin-edit-category .title-page {
+#admin-edit-post .title-page {
     background: #000;
     color: #fff;
     width: -webkit-fit-content;
@@ -59,31 +59,39 @@ li {
     text-transform: uppercase;
     font-weight: lighter;
 }
-#admin-edit-category .show-category {
+#admin-edit-post .show-category {
     margin-top: 50px;
 }
-#admin-edit-category .show-category h1 {
+#admin-edit-post .show-category h1 {
     text-align: center;
-    text-transform: capitalize;
     font-weight: bolder;
     margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: lighter;
+    margin: 0;
 }
-#admin-edit-category .show-category p {
+#admin-edit-post .show-category h2 {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+#admin-edit-post .show-category p {
     margin-top: 20px;
     text-align: center;
 }
-#admin-edit-category .show-category button {
+#admin-edit-post .show-category button {
     margin: 5px;
 }
 @media (min-width: 768px) {
-    #admin-edit-category .accordion .card .user {
+    #admin-edit-post .accordion .card .user {
     padding-left: 40px;
   }
   #sidebar-wrapper {
     margin-left: 0;
   }
 
-  #admin-edit-category {
+  #admin-edit-post {
     min-width: 0;
     width: 100%;
   }

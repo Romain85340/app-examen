@@ -94,7 +94,10 @@ const { adminHome,
         adminDeleteUser,
         pageEditCategory,
         editImageCategory,
-        editContentCategory } = require("./controllers/admin")
+        editContentCategory,
+        pageEditPost,
+        editImagePost,
+        editContentPost } = require("./controllers/admin")
 
 
 ////// Session //////
@@ -153,6 +156,9 @@ app.get("/admin/edit/category/:id", checkRole, pageEditCategory) // Display edit
 app.put("/admin/edit/category/image/:id", editImageCategory) // Admin update image of category
 app.put("/admin/edit/category/content/:id", editContentCategory) // Admin update content of category
 app.delete("/admin/delete/user/:id", adminDeleteUser) // Admin delete user
+app.get("/admin/edit/post/:id", checkRole, pageEditPost) // Display edit page of post
+app.put("/admin/edit/post/image/:id", checkRole, editImagePost) // Admin edit image of the post
+app.put("/admin/edit/post/content/:id", checkRole, editContentPost)
 
 
 /////// Serveur /////////

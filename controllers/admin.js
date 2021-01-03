@@ -301,5 +301,76 @@ module.exports = {
         } catch(err){
             res.send(err)
         }
+    },
+    // Display page edit post
+    pageEditPost: async (req, res) => {
+        const id = req.params.id
+
+        try {
+            const post = await query("SELECT i.id AS id_post, i.title AS title_post, i.image, c.id AS id_category, c.title AS title_category, i.content FROM item AS i INNER JOIN category AS c ON c.id = i.id_category WHERE i.id = ?", [id])
+            const categories = await query("SELECT id, title FROM category")
+            res.render("admin-edit-post", {post: post[0], error: req.flash("error"), success: req.flash("success"), categories})
+            // res.json({post: post[0], categories})
+        } catch(err){
+            res.send(err)
+        }
+    },
+    // Change image of the post 
+    editImagePost: async (req, res) => {
+        const id = req.params.id
+
+        if (!req.files){
+            req.flash("error", "Selectionner une image"),
+            res.redirect(`back`)
+        } else {
+    
+        let imageUpload = req.files.image
+        // var for upload name image in mySQL
+        let image = `/images/${imageUpload.name}` 
+            
+            
+        // if the image has the correct format
+        if (imageUpload.mimetype === "image/jpeg" || imageUpload.mimetype === "image/jpg" || imageUpload.mimetype === "image/gif" || imageUpload.mimetype === "image/png") {
+            // Use the mv() method to place the file somewhere in NodeJS
+            imageUpload.mv(`public/images/${imageUpload.name}`, async function(err) {
+                if (err){
+                    return res.status(500).send(err);
+                }
+                try{
+                    await query("UPDATE item SET image = ? WHERE id = ?", [image, id])
+                    req.flash("success", "L'image a bien été mis à jour"),
+                    res.redirect(`back`)
+                } catch(err) {
+                    res.send(err)
+                }
+            });
+        } else {
+            req.flash("error", "Le format de l'image n'est pas correct"),
+            res.redirect(`back`)
+        }}
+    },
+    // Chnage content of the post
+    editContentPost: async (req, res) => {
+        const id = req.params.id
+        const title = req.body.title
+        const content = req.body.content
+        const id_category = req.body.category
+
+        console.log(content);
+        console.log(title);
+
+        try {
+            if(!title || !content || id_category === "null"){
+                req.flash("error", "Les champs doivent être rempli, n'oubliez pas de sélectionnez une catégorie"),
+                res.redirect(`back`)
+            } else {
+                await query("UPDATE item SET title = ?, content = ?, id_category = ? WHERE id = ?", [title, content, id_category, id])
+                req.flash("success", "Les informations ont bien été mis à jour"),
+                res.redirect(`/admin/edit/post/${id}`)
+            }
+        } catch(err){
+            res.send(err)
+        }
     }
+
 }
