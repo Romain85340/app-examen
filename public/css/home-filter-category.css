@@ -131,6 +131,9 @@ main {
     visibility: visible;
     display: block;
 }
+.filter-by-category .no-post {
+    margin: 100px auto;
+}
 .footer {
     background-color: rgba(0, 0, 0, 0.9);
 }
@@ -163,6 +166,9 @@ main {
       z-index: 1;
       margin-top: -3rem;
       max-width: 50vw;
+    }
+    .filter-by-category .no-post {
+        margin: 155px auto;
     }
 }
 @media (min-width: 1600px) {

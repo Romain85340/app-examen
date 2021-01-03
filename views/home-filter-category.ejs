@@ -56,12 +56,18 @@
         <!-- One post end -->
         <%});%>
         <% } else { %>
-            <h2>La categorie ne possede pas d'article.</h2>
-            <% if(userSession.userID !== undefined) { %> 
-            <a href="/user/<%= userSession.userID%>">Crée un article</a>
+          <div class="no-post container d-flex flex-column justify-content-center align-items-center">
+            <h2 style="text-align: center;">La categorie ne possede pas d'article.</h2>
+            <% if(userSession.userID !== undefined) { %>
+              <% if(userSession.roleID == 1) { %>
+                <a href="/user/<%= userSession.userID%>/#post" style="background: #007bff; color: #fff; padding: 8px 12px;border-radius: 4px;margin-top: 10px;">Crée un article</a>
+              <% } else { %>
+                <a href="/admin/<%= userSession.userID%>/#create-post" style="background: #007bff; color: #fff; padding: 8px 12px;border-radius: 4px;margin-top: 10px;">Crée un article</a>
+              <% } %>
             <% } else { %>
-            <a href="/auth/login">Connectez vous et créée un article</a>
+            <a href="/auth/login" style="background: #007bff; color: #fff; padding: 8px 12px;border-radius: 4px;margin-top: 10px;">Connectez vous et crée un article</a>
             <% } %>
+          </div>
         <% } %>
         
 

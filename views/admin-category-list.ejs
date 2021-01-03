@@ -65,8 +65,10 @@
                         </div>
                     </div>
                     <div class="row btn d-flex justify-content-lg-around">
-                        <a class="edit" href="">Modifier la categorie</a>
-                        <button class="delete">Supprimer</button>
+                        <a class="edit" href="/admin/edit/category/<%= entry.id %>">Modifier la categorie</a>
+                        <form action="/admin/category/<%= entry.id%>?_method=DELETE" method="POST">
+                          <button class="delete">Supprimer</button>
+                        </form>
                     </div>
                   </div>
                 </div>

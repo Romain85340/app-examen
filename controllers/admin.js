@@ -212,35 +212,6 @@ module.exports = {
           }
         );
     },
-    // Edit category ('/admin/category/edit/:id')
-    adminUpdateCategory: async (req, res) => {
-        const id = req.params.id
-
-        if (!req.files){
-            res.json("Selectionner une image")
-        } else {
-    
-        let imageUpload = req.files.image
-        // var for upload name image in mySQL
-        let image = `/images/${imageUpload.name}` 
-            
-            
-        // if the image has the correct format
-        if (imageUpload.mimetype === "image/jpeg" || imageUpload.mimetype === "image/jpg" || imageUpload.mimetype === "image/gif" || imageUpload.mimetype === "image/png") {
-            // Use the mv() method to place the file somewhere in NodeJS
-            imageUpload.mv(`public/images/${imageUpload.name}`, async function(err) {
-                if (err){
-                    return res.status(500).send(err);
-                }
-                try{
-                    await query("UPDATE category SET image = ? WHERE id = ?", [image, id])
-                    res.json("L'image de la categorie à bien été modifier")
-                } catch(err) {
-                    res.send(err)
-                }
-            });
-        }}
-    },
     // Delete user ('/admin/delete/user/:id')
     adminDeleteUser: async (req, res) => {
         const id = req.params.id
@@ -261,6 +232,73 @@ module.exports = {
             // res.json({categories})
             res.render("admin-category-list", {categories})
         } catch(err) {
+            res.send(err)
+        }
+    },
+    // Display page edit of category
+    pageEditCategory: async (req, res) => {
+        const id = req.params.id
+
+        try {
+            const category = await query("SELECT id, title, image, content FROM category WHERE id = ?", [id])
+            res.render("admin-edit-category", {category: category[0], error: req.flash("error"), success: req.flash("success")})
+            // res.json({category: category[0]})
+        } catch(err){
+            res.send(err)
+        }
+    },
+    // Edit image of category
+    editImageCategory: async (req, res) => {
+        const id = req.params.id
+
+        if (!req.files){
+            req.flash("error", "Selectionner une image"),
+            res.redirect(`back`)
+        } else {
+    
+        let imageUpload = req.files.image
+        // var for upload name image in mySQL
+        let image = `/images/${imageUpload.name}` 
+            
+            
+        // if the image has the correct format
+        if (imageUpload.mimetype === "image/jpeg" || imageUpload.mimetype === "image/jpg" || imageUpload.mimetype === "image/gif" || imageUpload.mimetype === "image/png") {
+            // Use the mv() method to place the file somewhere in NodeJS
+            imageUpload.mv(`public/images/${imageUpload.name}`, async function(err) {
+                if (err){
+                    return res.status(500).send(err);
+                }
+                try{
+                    await query("UPDATE category SET image = ? WHERE id = ?", [image, id])
+                    req.flash("success", "L'image a bien été mis à jour"),
+                    res.redirect(`back`)
+                } catch(err) {
+                    res.send(err)
+                }
+            });
+        } else {
+            req.flash("error", "Le format de l'image n'est pas correct"),
+            res.redirect(`back`)
+        }}
+    },
+    editContentCategory: async (req, res) => {
+        const id = req.params.id
+        const title = req.body.title
+        const content = req.body.content
+
+        console.log(content);
+        console.log(title);
+
+        try {
+            if(!title || !content){
+                req.flash("error", "Les champs doivent être rempli"),
+                res.redirect(`back`)
+            } else {
+                await query("UPDATE category SET title = ?, content = ? WHERE id = ?", [title, content, id])
+                req.flash("success", "Les informations ont bien été mis à jour"),
+                res.redirect(`/admin/edit/category/${id}`)
+            }
+        } catch(err){
             res.send(err)
         }
     }

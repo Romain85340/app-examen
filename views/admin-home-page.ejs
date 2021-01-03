@@ -59,7 +59,7 @@
                           <h2 class="card-title">Categories</h5>
                           <h3 class="card-subtitle mb-2 text-muted">Nombre de categories:</h6>
                           <p class="card-text"><%= category.nb_category%></p>
-                          <a href="#" class="card-link">Afficher la liste</a>
+                          <a href="/admin/category" class="card-link">Afficher la liste</a>
                         </div>
                       </div>
                 </div>
@@ -91,7 +91,7 @@
         <!-- Form create category end -->
 
         <!-- Form create post start -->
-        <section class="container creat-post">
+        <section class="container creat-post" id="create-post">
             <h1>Cree un article</h1>
             <div class="col-md-12">
                 <form class="form-post shadow-lg p-3 mb-5 bg-white rounded" action="/admin/item" method="POST" enctype="multipart/form-data">

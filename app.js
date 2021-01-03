@@ -91,8 +91,10 @@ const { adminHome,
         getListUserReview,
         adminCreateCategory,
         adminDeleteCategory,
-        adminUpdateCategory,
-        adminDeleteUser } = require("./controllers/admin")
+        adminDeleteUser,
+        pageEditCategory,
+        editImageCategory,
+        editContentCategory } = require("./controllers/admin")
 
 
 ////// Session //////
@@ -147,7 +149,9 @@ app.delete("/admin/delete/item/:id", adminDeleteItem) // Delete one post
 app.delete("/admin/category/:id", adminDeleteCategory) // Delete a category
 app.get("/admin/item/:id/comment", getListComment) // Show list of comment of item
 app.get("/admin/item/:id/user-review", getListUserReview) // Show list of like and dislike of item
-app.put("/admin/category/edit/:id", adminUpdateCategory) // Admin update category
+app.get("/admin/edit/category/:id", checkRole, pageEditCategory) // Display edit page for category
+app.put("/admin/edit/category/image/:id", editImageCategory) // Admin update image of category
+app.put("/admin/edit/category/content/:id", editContentCategory) // Admin update content of category
 app.delete("/admin/delete/user/:id", adminDeleteUser) // Admin delete user
 
 
