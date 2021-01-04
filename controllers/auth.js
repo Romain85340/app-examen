@@ -10,6 +10,11 @@ module.exports = {
     },
     // Register account ("/auth/register")
     register: async (req, res) => {
+        function editMonth(num, size) {
+            num = num.toString();
+            if(num < size) num = "0" + num;
+            return num;
+        }
         // var for request form
         let firstname = req.body.firstname
         let lastname = req.body.lastname
@@ -19,7 +24,7 @@ module.exports = {
         let email = req.body.email
         let password = req.body.password
         let password2 = req.body.password2
-        let birthday = year + month + day
+        let birthday = year + editMonth(month, 10) + day
         console.log(birthday);
         // request SQL in const for use after
         const emailQuery = "SELECT email FROM user WHERE email = '" + email + "';"
