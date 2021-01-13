@@ -23,22 +23,24 @@ app.use(express.static(path.join(__dirname, './public')));
 app.use(fileUpload());
 // Express-session
 app.use(session({
-    secret: 'shhuuuuut',
+    secret: 'shut',
     resave: false,
     saveUninitialized: true,
     name: 'biscuit',
     cookie: {   maxAge: 24 * 60 * 60 * 7 * 1000 }
   }));
+
 // MySQL
 var connection = mysql.createConnection({
     host     : process.env.DB_HOST,
     user     : process.env.DB_USER,
     password : process.env.DB_PASS,
     database : process.env.DB_DATABASE
-  });
+});
 connection.connect(() => {
     console.log("Connectez à la base de donnée");
 });
+
 const query = util.promisify(connection.query).bind(connection);
 global.connection = connection;
 global.query = query;

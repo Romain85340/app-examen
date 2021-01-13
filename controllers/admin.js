@@ -15,6 +15,7 @@ module.exports = {
             res.send(err)
         }
     },
+    
     // Display list user ("/admin/user")
     showAllUser: async (req, res) => {
         try {
@@ -63,6 +64,7 @@ module.exports = {
             res.send(err)
         }
     },
+
     // Delete one post ("/admin/delete/item/:id")
     adminDeleteItem: (req, res) => {
         const id = req.params.id
@@ -79,6 +81,7 @@ module.exports = {
             }
         );
     },
+
     // Display list item ("/admin/item")
     showItem: async (req, res) => {
         try {
