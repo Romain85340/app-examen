@@ -6,7 +6,6 @@
       <span class="navbar-toggler-icon" style="color: #fff !important"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
-      <!-- If user start-->
       <ul class="navbar-nav mx-auto">
         <li class="nav-item px-lg-4 d-flex align-items-center">
           <a class="nav-link text-uppercase text-expanded" href="/#new-post">Actualités récente</a>
@@ -14,10 +13,13 @@
         <li class="nav-item px-lg-4 d-flex align-items-center">
           <a class="nav-link text-uppercase text-expanded" href="/#category">Sports</a>
         </li>
+        <!-- If no user start -->
         <% if(userSession.userID == undefined) { %>
         <li class="nav-item px-lg-4 d-flex align-items-center">
           <a class="nav-link text-uppercase text-expanded" href="/auth/login">Connexion</a>
         </li>
+        <!-- If no user end -->
+        <!-- If user start-->
         <% } else { %>
           <% if(userSession.roleID == 1) { %>
           <li class="nav-item px-lg-4 d-flex align-items-center">
