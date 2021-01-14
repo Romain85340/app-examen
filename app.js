@@ -89,6 +89,10 @@ app.use("/user", actionUser, user) // User space
 app.use("/admin", checkRole, admin) // Admin space
 
 
+// Error 404
+app.use(function (req, res) {
+    res.status(404).render('error-404');
+});
 
 /////// Server /////////
 app.listen(PORT, () => {
