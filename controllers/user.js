@@ -167,12 +167,12 @@ module.exports = {
         try {
             if(userID != undefined){
                 const checkLike = await query("SELECT s.id_user, s.id_item, s.bad, s.good, i.id_category FROM status AS s INNER JOIN item AS i ON i.id = s.id_item WHERE s.id_item = ? AND s.id_user = ?", [idItem, userID])
-                console.log(checkLike.length);
+                // console.log(checkLike.length);
                 if(checkLike.length === 0){
                     const like = await query("INSERT INTO status (good, id_user, id_item) VALUES (1,?,?)", [userID, idItem])
                     // console.log(like);
                     // res.json("Vous venez de liker l'item")
-                    res.redirect("back")
+                    res.redirect(`back`)
                 }
                 else if(checkLike[0].bad === 1){
                     const changeForLike = await query("UPDATE status SET bad = null, good = 1 WHERE status.id_item = ?  AND status.id_user = ?", [idItem, userID])

@@ -12,15 +12,19 @@ const PORT = 3000;
 
 // Express
 const app = express()
+
 // Body parser
 app.use(express.json())
 app.use(express.urlencoded({
     extended: false
 }))
+
 // Express static
 app.use(express.static(path.join(__dirname, './public')));
+
 // File Upload
 app.use(fileUpload());
+
 // Express-session
 app.use(session({
     secret: 'shut',
@@ -44,10 +48,12 @@ connection.connect(() => {
 const query = util.promisify(connection.query).bind(connection);
 global.connection = connection;
 global.query = query;
+
 // EJS
 app.set('view engine', 'ejs');
 // Method Override
 app.use(methodOverride('_method'))
+
 // Connect flash
 app.use(flash());
 
@@ -84,7 +90,7 @@ app.use("/admin", checkRole, admin) // Admin space
 
 
 
-/////// Serveur /////////
+/////// Server /////////
 app.listen(PORT, () => {
     console.log(`Le serveur tourne sur le port ${PORT}`);
 })
