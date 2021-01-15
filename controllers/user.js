@@ -152,7 +152,7 @@ module.exports = {
         const id = req.params.id;
         const userID = req.session.userID
         try {
-            await query("DELETE FROM status WHERE id_item = ?", [id])
+            await query("DELETE FROM status WHERE id_item = ? AND id_user = ?", [id, userID])
             req.flash("success", "L'avis a bien été retirer"),
             res.redirect(`/user/${userID}`)
         } catch(err) {

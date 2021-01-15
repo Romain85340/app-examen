@@ -70,23 +70,23 @@ app.use(function(req, res, next){
     const userLASTNAME = req.session.userLASTNAME
     const userIMG = req.session.image
             
-    res.locals.userSession = {userID, roleID, userNAME, userLASTNAME, userIMG}
+    res.locals.userSession = { userID, roleID, userNAME, userLASTNAME, userIMG }
     // console.log(res.locals.userSession);
     next();
 })
         
 /////// Routes ////////
-const home = require("./routes/home")
-const auth = require("./routes/auth");
-const user = require("./routes/user");
-const admin = require("./routes/admin");
+const home = require("./routes/home") // Home space
+const auth = require("./routes/auth"); // Authentification space
+const user = require("./routes/user"); // User space
+const admin = require("./routes/admin"); // Admin space
 
 
 /////// URL ////////////
-app.use("/", home) // Home space
-app.use("/auth", auth) // Authentification space
-app.use("/user", actionUser, user) // User space
-app.use("/admin", checkRole, admin) // Admin space
+app.use("/", home)
+app.use("/auth", auth) 
+app.use("/user", actionUser, user)
+app.use("/admin", checkRole, admin) 
 
 
 // Error 404
