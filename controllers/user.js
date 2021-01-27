@@ -119,34 +119,6 @@ module.exports = {
             res.send(err)
         }
     },
-    // Comment one post ("/comment/:id")
-    commentItem: async (req, res) => {
-        const idItem = req.params.id;
-        const userID = req.session.userID
-        const content = req.body.comment
-
-        try {
-            if(userID != undefined){
-                const comment = await query("INSERT INTO comment (content, id_user, id_item) VALUES (?, ?, ?)", [content, userID, idItem])
-                // res.json("Votre commentaire a bien été ajouté")
-                res.redirect(`/user/${userID}`)
-            } else {
-                res.redirect("/auth/login")
-            }
-        } catch(err){
-            res.send(err)
-        }
-    },
-    // User delete comment ("/user/comment/:id")
-    deleteComment: async (req, res) => {
-        const id = req.params.id
-        try {
-            await query("DELETE FROM comment WHERE id = ?", [id])
-            res.json("Ton commentaire est supprimé")
-        } catch(err){
-            res.send(err)
-        }
-    },
     //Delete status like/dislike
     deleteLikeOrDislike: async (req, res) => {
         const id = req.params.id;
@@ -191,6 +163,34 @@ module.exports = {
             res.send(err)
         }
     },
+    // Comment one post ("/comment/:id")
+    commentItem: async (req, res) => {
+        const idItem = req.params.id;
+        const userID = req.session.userID
+        const content = req.body.comment
+
+        try {
+            if(userID != undefined){
+                const comment = await query("INSERT INTO comment (content, id_user, id_item) VALUES (?, ?, ?)", [content, userID, idItem])
+                // res.json("Votre commentaire a bien été ajouté")
+                res.redirect(`/user/${userID}`)
+            } else {
+                res.redirect("/auth/login")
+            }
+        } catch(err){
+            res.send(err)
+        }
+    },
+    // User delete comment ("/user/comment/:id")
+    deleteComment: async (req, res) => {
+        const id = req.params.id
+        try {
+            await query("DELETE FROM comment WHERE id = ?", [id])
+            res.json("Ton commentaire est supprimé")
+        } catch(err){
+            res.send(err)
+        }
+    },
     // Dislike post ("/dislike/:id")
     dislike : async (req, res) => {
         const idItem = req.params.id
@@ -224,8 +224,7 @@ module.exports = {
     // User edit profile ("/user/edit/profil/:id")
     editProfileUser: async (req, res) => {
         const id = req.params.id
-        const { firstname, lastname, year, month, day, email } = req.body
-        const birthday = year + month + day
+        const { firstname, lastname, birthday, email } = req.body
 
         try{
             await query("UPDATE user SET firstname = ?, lastname = ?, email = ?, birthday = ? WHERE id = ?", [firstname, lastname, email, birthday, id])

@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, './public')));
 // File Upload
 app.use(fileUpload());
 
-// Express-session
+// Express session
 app.use(session({
     secret: 'shut',
     resave: false,
@@ -60,8 +60,8 @@ app.use(flash());
 
 ///// Middleware ////////
 const { actionUser, checkRole } = require('./middleware/auth')
-       
-        
+
+
 ////// Session //////
 app.use(function(req, res, next){
     const userID = req.session.userID
@@ -75,6 +75,7 @@ app.use(function(req, res, next){
     next();
 })
         
+
 /////// Routes ////////
 const home = require("./routes/home") // Home space
 const auth = require("./routes/auth"); // Authentification space
@@ -86,13 +87,14 @@ const admin = require("./routes/admin"); // Admin space
 app.use("/", home)
 app.use("/auth", auth) 
 app.use("/user", actionUser, user)
-app.use("/admin", checkRole, admin) 
+app.use("/admin", checkRole, admin)
 
 
 // Error 404
 app.use(function (req, res) {
     res.status(404).render('error-404');
 });
+
 
 /////// Server /////////
 app.listen(PORT, () => {

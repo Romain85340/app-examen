@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const joi = require('joi');
 
 module.exports = {
     getLogin: (req, res) => {
@@ -10,29 +11,41 @@ module.exports = {
     },
     // Register account ("/auth/register")
     register: async (req, res) => {
-        function editMonth(num, size) {
-            num = num.toString();
-            if(num < size) num = "0" + num;
-            return num;
-        }
         // var for request form
         let firstname = req.body.firstname
         let lastname = req.body.lastname
-        let day = req.body.day
-        let month = req.body.month
-        let year = req.body.year
+        let birthday = req.body.birthday
         let email = req.body.email
         let password = req.body.password
         let password2 = req.body.password2
-        let birthday = year + editMonth(month, 10) + day
-        console.log(birthday);
+
+        const schema = joi.object().keys({
+            joi_firstname: joi.string(),
+            joi_lastname: joi.string(),
+            joi_email: joi.string().email(),
+        })
+
+        const dataToValidate = {
+            joi_firstname: firstname,
+            joi_lastname: lastname,
+            joi_email: email,
+        }
+        
+        const result = schema.validate(dataToValidate);
+        console.log(result);
+        //console.log(birthday);
+        
         // request SQL in const for use after
         const emailQuery = "SELECT email FROM user WHERE email = '" + email + "';"
 
-    if (!firstname || !lastname || !day || !month || !year || !email || !password || !password2 || !req.files) {
+    if (!firstname || !lastname || !birthday || !email || !password || !password2 || !req.files) {
         req.flash("error", "Remplissez tout les champs"),
         res.redirect(`/auth/register`)
         // res.json("Remplissez tout les champs")
+    }
+    else if(result.error){
+        req.flash("error", "Les données qui ont été saisi sont erroné"),
+        res.redirect(`/auth/register`)
     }
     // if password confirmation is correct
     else if(password === password2){
@@ -54,7 +67,7 @@ module.exports = {
                     try{
                         // use method hash of bcrypt for hash the password in form and insert in SQL 
                         bcrypt.hash(password, 10, async (err, hash) => {
-                            await query ("INSERT INTO user (image, firstname, lastname, birthday, email, password, id_role) VALUES (?, ?, ?, ?, ?, ?, 1)", [image, firstname, lastname, birthday, email, hash]);       
+                            await query ("INSERT INTO user (??, firstname, lastname, birthday, email, password, id_role) VALUES (?, ?, ?, ?, ?, ?, 1)", ['image', image, dataToValidate.joi_firstname, dataToValidate.joi_lastname, birthday, dataToValidate.joi_email, hash]);     
                             if(!err){
                                 // res.json("Vous etes enregistrer")
                                 req.flash("success", "Vous etes enregistrer, connectez vous!"),

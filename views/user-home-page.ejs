@@ -122,27 +122,23 @@
                             <div class="row">
                                 <div class="col-md-6 d-flex flex-column">
                                     <label for="">Prénom</label>
-                                    <input type="text" placeholder="Votre prénom" name="firstname" value="<%= profil.firstname %>">
+                                    <input type="text" class="form-control" placeholder="Votre prénom" name="firstname" value="<%= profil.firstname %>">
                                 </div>
                                 <div class="col-md-6 d-flex flex-column">
                                     <label for="">Nom</label>
-                                    <input type="text" name="lastname" placeholder="Votre nom" value="<%= profil.lastname %>">
+                                    <input type="text" name="lastname" class="form-control" placeholder="Votre nom" value="<%= profil.lastname %>">
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12"> 
+                                    <label class="control-label" for="date">Date de naissance</label>
+                                    <input class="form-control" id="date" name="birthday" placeholder="JJ/MM/AAAA" type="date"/>
+                                  </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12 d-flex flex-column">
                                     <label for="">Email</label>
-                                    <input type="text" name="email" placeholder="Votre email" value="<%= profil.email %>">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 d-flex flex-column">
-                                    <label for="">Date de naissance</label>
-                                    <div class="birthday d-flex justify-content-around">
-                                        <input type="text" name="day" style="width: 70px;" value="<%= birthdayDate.day %>" placeholder="Jour">
-                                        <input type="text" name="month" style="width: 70px;" value="<%= birthdayDate.month %>" placeholder="Mois">
-                                        <input type="text" name="year" style="width: 70px;" value="<%= birthdayDate.year %>" placeholder="Année">
-                                    </div>
+                                    <input type="text" name="email" class="form-control" placeholder="Votre email" value="<%= profil.email %>">
                                 </div>
                             </div>
                             
@@ -173,13 +169,13 @@
                         <div class="row">
                             <div class="col-md-12 d-flex flex-column">
                                 <label for="">Choisissez votre mot de passe</label>
-                                <input type="password" name="password">
+                                <input type="password" class="form-control" name="password">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 d-flex flex-column">
                                 <label for="">Confirmer</label>
-                                <input type="password" name="password2">
+                                <input type="password" class="form-control" name="password2">
                             </div>
                         </div>
                     </div>
