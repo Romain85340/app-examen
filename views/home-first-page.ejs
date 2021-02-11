@@ -81,7 +81,7 @@
               </div>
               <ul class="d-flex flex-column align-items-center p-0">
                 <% categories.forEach(function(entry) {%>
-                  <li><a href="/articles/<%= entry.id%>"><%= entry.title%></a></li>
+                  <li><a href="/articles/<%= entry.id%>" style="text-transform: capitalize;"><%= entry.title%></a></li>
                 <%});%>
               </ul>
           </div>
