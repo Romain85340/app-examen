@@ -1,2 +1,1 @@
-# app-examen
-Application MVC NodeJS / MySQL 
+# Application examen (Développeur web et web mobile) en MVC NodeJS / MySQL
